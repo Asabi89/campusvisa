@@ -74,7 +74,7 @@ DEFAULT_FROM_EMAIL=CampusVisa <no-reply@nextstepc.com>
     run_cmd(ssh, f"echo '{env_content}' > /root/campusvisa/.env")
 
     # Start docker containers
-    run_cmd(ssh, "cd /root/campusvisa && docker-compose up -d --build")
+    run_cmd(ssh, "cd /root/campusvisa && docker compose up -d --build")
 
     # Setup Nginx Configuration
     nginx_conf = """
