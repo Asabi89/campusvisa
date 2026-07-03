@@ -1,0 +1,148 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block dashboard_title %}Plans{% endblock %}
+{% block page_header %}Plans{% endblock %}
+
+{% block dashboard_content %}
+<!-- Add Plan Toggle -->
+<div class="mb-6">
+    <details class="group">
+        <summary class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90 cursor-pointer inline-flex items-center space-x-2 list-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Ajouter un plan</span>
+        </summary>
+        <div class="bg-white rounded-2xl border border-gray-100 p-5 mt-3">
+            <h3 class="font-satoshi font-semibold text-secondary mb-4">Nouveau plan</h3>
+            <form method="post" action="{% url 'admin_panel:plans' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Nom</label>
+                        <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Prix (€)</label>
+                        <input type="number" name="price" step="0.01" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Description</label>
+                        <textarea name="description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary"></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Fonctionnalités</label>
+                        <textarea name="features" rows="3" placeholder="Une fonctionnalite par ligne" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary"></textarea>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" name="is_active" id="is_active_new" checked class="rounded border-gray-300 text-secondary focus:ring-secondary">
+                        <label for="is_active_new" class="text-sm text-gray-700 font-inter">Actif</label>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">Créer le plan</button>
+                </div>
+            </form>
+        </div>
+    </details>
+</div>
+
+<!-- Plans Grid -->
+{% if plans_list %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for plan in plans_list %}
+    <div class="bg-white rounded-2xl border border-gray-100 flex flex-col">
+        <!-- Header -->
+        <div class="p-5 border-b border-gray-100">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="font-satoshi font-bold text-lg text-secondary">{{ plan.name }}</h3>
+                {% if plan.is_active %}
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>
+                {% else %}
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Inactif</span>
+                {% endif %}
+            </div>
+            <p class="text-2xl font-bold text-secondary font-satoshi">{{ plan.price }} €</p>
+        </div>
+
+        <!-- Body -->
+        <div class="p-5 flex-1">
+            {% if plan.description %}
+            <p class="text-sm text-gray-600 font-inter mb-4">{{ plan.description }}</p>
+            {% endif %}
+
+            {% if plan.features %}
+            <ul class="space-y-2">
+                {% for feature in plan.features %}
+                <li class="flex items-start space-x-2 text-sm text-gray-700 font-inter">
+                    <svg class="w-4 h-4 text-green-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span>{{ feature }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <div class="px-5 py-4 border-t border-gray-100">
+            <div class="flex items-center justify-between">
+                <span class="text-xs text-gray-500 font-inter">{{ plan.sub_count }} abonne{{ plan.sub_count|pluralize:"s" }}</span>
+                <div class="flex items-center space-x-2">
+                    <button onclick="document.getElementById('edit-plan-{{ plan.pk }}').classList.toggle('hidden')" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-secondary/10 text-secondary hover:bg-secondary/20">Modifier</button>
+                    {% if plan.sub_count == 0 %}
+                    <form method="post" action="{% url 'admin_panel:plans' %}" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="pk" value="{{ plan.pk }}">
+                        <button type="submit" class="bg-accent text-white px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-red-700">Supprimer</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Inline Edit Form (hidden by default) -->
+        <div id="edit-plan-{{ plan.pk }}" class="hidden border-t border-gray-100 p-5 bg-gray-50/50 rounded-b-2xl">
+            <h4 class="font-satoshi font-semibold text-secondary text-sm mb-3">Modifier le plan</h4>
+            <form method="post" action="{% url 'admin_panel:plans' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="pk" value="{{ plan.pk }}">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Nom</label>
+                        <input type="text" name="name" value="{{ plan.name }}" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Prix (€)</label>
+                        <input type="number" name="price" value="{{ plan.price }}" step="0.01" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Description</label>
+                        <textarea name="description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">{{ plan.description }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Fonctionnalités</label>
+                        <textarea name="features" rows="3" placeholder="Une fonctionnalite par ligne" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">{% for f in plan.features %}{{ f }}{% if not forloop.last %}
+{% endif %}{% endfor %}</textarea>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" name="is_active" id="is_active_{{ plan.pk }}" {% if plan.is_active %}checked{% endif %} class="rounded border-gray-300 text-secondary focus:ring-secondary">
+                        <label for="is_active_{{ plan.pk }}" class="text-sm text-gray-700 font-inter">Actif</label>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">Enregistrer</button>
+                    <button type="button" onclick="document.getElementById('edit-plan-{{ plan.pk }}').classList.add('hidden')" class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="bg-white rounded-2xl border border-gray-100 px-5 py-12 text-center">
+    <svg class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p class="text-sm text-gray-400 font-inter">Aucun plan configure</p>
+</div>
+{% endif %}
+{% endblock %}

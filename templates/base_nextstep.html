@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Next Step Consulting{% endblock %}</title>
+    
+    <!-- Tailwind CSS 3 CDN -->
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .mix-blend-multiply { mix-blend-mode: multiply; }
+        .rounded-11px { border-radius: 11px; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="font-sans text-gray-800 bg-white antialiased flex flex-col min-h-screen">
+    
+    {% block navbar %}
+    <header class="bg-marine text-white sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <a href="{% url 'nextstep:home' %}" class="flex items-center gap-2">
+                        {% if ns_settings and ns_settings.logo %}
+                            <img src="{{ ns_settings.logo.url }}" alt="Logo" class="h-10">
+                        {% else %}
+                            <svg class="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span class="font-bold text-xl uppercase tracking-wider">Next Step<br/><span class="text-xs text-blue font-medium">Consulting</span></span>
+                        {% endif %}
+                    </a>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    {% with request.resolver_match.url_name as current_page %}
+                    <a href="{% url 'nextstep:home' %}" class="text-white hover:text-gold transition-colors font-medium {% if current_page == 'home' %}text-gold{% endif %}">Accueil</a>
+                    <a href="{% url 'nextstep:home' %}#expertise" class="text-white hover:text-gold transition-colors font-medium">Expertises</a>
+                    <a href="{% url 'nextstep:campus_france' %}" class="text-white hover:text-gold transition-colors font-medium {% if current_page == 'campus_france' %}text-gold{% endif %}">Campus France</a>
+                    <a href="{% url 'nextstep:contact' %}" class="text-white hover:text-gold transition-colors font-medium {% if current_page == 'contact' %}text-gold{% endif %}">Contact</a>
+                    {% endwith %}
+                </nav>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard:overview' %}" class="text-white hover:text-gold text-sm font-medium">Espace Client</a>
+                        <a href="{% url 'account_logout' %}" class="text-gray-300 hover:text-white text-sm">Déconnexion</a>
+                    {% else %}
+                        <a href="{% url 'account_login' %}" class="text-white hover:text-gold text-sm font-medium">Connexion</a>
+                        <a href="{% if ns_settings and ns_settings.rendez_vous_link %}{{ ns_settings.appointment_url }}{% else %}{% url 'nextstep:contact' %}{% endif %}" class="bg-gold text-marine px-5 py-2 font-semibold hover:bg-yellow-500 transition-colors rounded-[11px]-11px">Prendre RDV</a>
+                    {% endif %}
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-white hover:text-gold">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-marine border-t border-blue">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="{% url 'nextstep:home' %}" class="block px-3 py-2 text-white hover:text-gold font-medium">Accueil</a>
+                <a href="{% url 'nextstep:home' %}#expertise" class="block px-3 py-2 text-white hover:text-gold font-medium">Expertises</a>
+                <a href="{% url 'nextstep:campus_france' %}" class="block px-3 py-2 text-white hover:text-gold font-medium">Campus France</a>
+                <a href="{% url 'nextstep:contact' %}" class="block px-3 py-2 text-white hover:text-gold font-medium">Contact</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard:overview' %}" class="block px-3 py-2 text-gold font-medium">Espace Client</a>
+                    <a href="{% url 'account_logout' %}" class="block px-3 py-2 text-gray-400">Déconnexion</a>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="block px-3 py-2 text-gold font-medium">Connexion</a>
+                    <a href="{% if ns_settings and ns_settings.rendez_vous_link %}{{ ns_settings.appointment_url }}{% else %}{% url 'nextstep:contact' %}{% endif %}" class="block px-3 py-2 text-white bg-gold font-medium text-center mt-2 rounded-[11px]-11px">Prendre RDV</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    {% endblock %}
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <footer class="bg-marine text-white pt-16 pb-8 border-t-4 border-gold mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="md:col-span-1">
+                    <span class="font-bold text-xl uppercase tracking-wider block mb-4">Next Step<br/><span class="text-sm text-gold font-medium">Consulting</span></span>
+                    <p class="text-gray-400 text-sm">Votre partenaire de confiance pour concrétiser vos projets.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Liens Utiles</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="{% url 'nextstep:home' %}" class="hover:text-gold transition-colors">Accueil</a></li>
+                        <li><a href="{% url 'nextstep:home' %}#expertise" class="hover:text-gold transition-colors">Nos Services</a></li>
+                        <li><a href="{% url 'nextstep:campus_france' %}" class="hover:text-gold transition-colors">Campus France</a></li>
+                        <li><a href="{% url 'nextstep:faq' %}" class="hover:text-gold transition-colors">FAQ</a></li>
+                        <li><a href="{% url 'nextstep:contact' %}" class="hover:text-gold transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            {% if ns_settings and ns_settings.contact_email %}{{ ns_settings.contact_email }}{% else %}contact@nextstep-consulting.com{% endif %}
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            {% if ns_settings and ns_settings.contact_phone %}{{ ns_settings.contact_phone }}{% else %}+33 1 23 45 67 89{% endif %}
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Réseaux Sociaux</h4>
+                    <div class="flex gap-4">
+                        <a href="{% if ns_settings and ns_settings.facebook_link %}{{ ns_settings.facebook_link }}{% else %}#{% endif %}" class="w-10 h-10 bg-white/10 flex items-center justify-center hover:bg-gold hover:text-marine transition-colors rounded-[11px]-11px">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                        </a>
+                        <a href="{% if ns_settings and ns_settings.linkedin_link %}{{ ns_settings.linkedin_link }}{% else %}#{% endif %}" class="w-10 h-10 bg-white/10 flex items-center justify-center hover:bg-gold hover:text-marine transition-colors rounded-[11px]-11px">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/20 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; {% now "Y" %} Next Step Consulting. Tous droits réservés. | <a href="{% url 'nextstep:mentions_legales' %}" class="hover:text-white transition-colors">Mentions Légales</a></p>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <script>
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,312 @@
+{% extends 'dashboard/base.html' %}
+
+{% block dashboard_title %}Rendez-vous{% endblock %}
+{% block page_header %}Rendez-vous{% endblock %}
+
+{% block dashboard_content %}
+{% if not can_meet %}
+<!-- Locked state: Basique plan -->
+<div class="bg-white border-2 border-gray-200 rounded-2xl p-8 sm:p-12 text-center">
+    <div class="relative inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-6">
+        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center">
+            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+        </div>
+    </div>
+    <h2 class="font-satoshi font-bold text-xl text-secondary mb-2">Les rendez-vous Google Meet sont disponibles à partir du plan Standard</h2>
+    <p class="text-gray-500 text-sm mb-6 max-w-md mx-auto">Planifiez des appels video avec votre conseiller via Google Meet.</p>
+    <a href="{% url 'dashboard:plan' %}" class="inline-flex items-center px-6 py-3 bg-accent text-white rounded-full font-semibold text-sm hover:bg-red-700 transition-colors shadow-lg shadow-accent/25">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        Ameliorer mon plan
+    </a>
+</div>
+
+{% else %}
+<!-- Header area -->
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h2 class="font-satoshi font-bold text-xl sm:text-2xl text-secondary">Vos rendez-vous</h2>
+        <p class="text-gray-500 text-sm mt-0.5">Vos reunions sont en visio via Google Meet</p>
+    </div>
+    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-secondary/10 text-secondary">
+        {{ meetings_count }}/{% if meetings_limit == -1 %}∞{% else %}{{ meetings_limit }}{% endif %}
+    </span>
+</div>
+
+<!-- Upcoming meetings -->
+<div class="space-y-3 mb-8">
+    {% for meeting in user_meetings %}
+    <div class="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 hover:shadow-sm transition-shadow">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex items-start gap-3">
+                <!-- Google Meet icon -->
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 {% if meeting.status == 'scheduled' %}bg-blue-50{% elif meeting.status == 'completed' %}bg-green-50{% else %}bg-gray-100{% endif %}">
+                    <svg class="w-6 h-6 {% if meeting.status == 'scheduled' %}text-blue-600{% elif meeting.status == 'completed' %}text-green-600{% else %}text-gray-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </div>
+                <div>
+                    <p class="font-semibold text-secondary text-sm">{{ meeting.topic }}</p>
+                    <div class="flex items-center space-x-2 mt-1">
+                        <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span class="text-xs text-gray-500">{{ meeting.slot.date|date:"l d F Y" }}</span>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-0.5">
+                        <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span class="text-xs text-gray-500">{{ meeting.slot.start_time|time:"H:i" }} — {{ meeting.slot.end_time|time:"H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 sm:flex-col sm:items-end">
+                {% if meeting.status == 'scheduled' %}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Planifie</span>
+                {% elif meeting.status == 'completed' %}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Termine</span>
+                {% elif meeting.status == 'cancelled' %}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Annule</span>
+                {% endif %}
+                {% if meeting.status == 'scheduled' %}
+                <div class="flex items-center gap-2 flex-wrap">
+                    {% if meeting.meeting_link %}
+                    <a href="{{ meeting.meeting_link }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors">
+                        <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        Rejoindre le Meet
+                    </a>
+                    {% endif %}
+                    {% if meeting.calendar_link %}
+                    <a href="{{ meeting.calendar_link }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 border border-gray-300 hover:bg-gray-50 text-secondary text-xs font-semibold rounded-lg transition-colors">
+                        <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Ajouter au calendrier
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+
+    <div class="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-50 mb-4">
+            <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        </div>
+        <p class="text-gray-500 text-sm">Aucun rendez-vous planifie</p>
+        <p class="text-xs text-gray-400 mt-1">Reservez un créneau ci-dessous pour un appel Google Meet avec votre conseiller.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Book new meeting -->
+{% if can_book %}
+    {% if available_slots %}
+    <div class="bg-white border border-gray-200 rounded-2xl p-6">
+        <div class="flex items-center space-x-3 mb-5">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </div>
+            <div>
+                <h3 class="font-satoshi font-semibold text-secondary">Planifier un rendez-vous</h3>
+                <p class="text-xs text-gray-400">Un lien Google Meet sera genere automatiquement</p>
+            </div>
+        </div>
+
+        <!-- Step 1: Calendar -->
+        <div class="mb-5">
+            <label class="block text-sm font-semibold text-secondary mb-3">1. Choisissez une date</label>
+            <div id="slot-calendar" class="max-w-sm mx-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <button type="button" id="cal-prev" class="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <span id="cal-month-label" class="font-satoshi font-semibold text-secondary text-sm"></span>
+                    <button type="button" id="cal-next" class="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+                <div class="grid grid-cols-7 gap-0 text-center text-xs font-semibold text-gray-400 mb-1">
+                    <div class="py-2">Lun</div><div class="py-2">Mar</div><div class="py-2">Mer</div>
+                    <div class="py-2">Jeu</div><div class="py-2">Ven</div><div class="py-2">Sam</div><div class="py-2">Dim</div>
+                </div>
+                <div id="cal-grid" class="grid grid-cols-7 gap-0.5"></div>
+            </div>
+        </div>
+
+        <!-- Step 2: Time slots (hidden until date selected) -->
+        <div id="time-slots-section" class="mb-5 hidden">
+            <label class="block text-sm font-semibold text-secondary mb-3">2. Choisissez un horaire</label>
+            <div id="time-slots" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Step 3: Topic + submit -->
+        <form method="post" id="booking-form" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="slot_id" id="slot_id" required>
+            <div>
+                <label for="topic" class="block text-sm font-semibold text-secondary mb-2">3. Sujet du rendez-vous</label>
+                <input type="text" name="topic" id="topic" placeholder="Ex: Revision de mon dossier Campus France" required class="w-full border-2 border-gray-200 rounded-xl py-3 px-4 text-sm text-secondary focus:outline-none focus:border-secondary transition-colors">
+            </div>
+            <button type="submit" id="book-btn" disabled class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-accent text-white rounded-full font-semibold text-sm hover:bg-red-700 transition-colors shadow-lg shadow-accent/25 disabled:opacity-40 disabled:cursor-not-allowed">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Reserver avec Google Meet
+            </button>
+        </form>
+    </div>
+
+    <script>
+    (function() {
+        // Build slots data from Django context
+        const slots = [
+            {% for slot in available_slots %}
+            { id: {{ slot.id }}, date: "{{ slot.date|date:'Y-m-d' }}", start: "{{ slot.start_time|time:'H:i' }}", end: "{{ slot.end_time|time:'H:i' }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        // Group slots by date
+        const slotsByDate = {};
+        slots.forEach(s => {
+            if (!slotsByDate[s.date]) slotsByDate[s.date] = [];
+            slotsByDate[s.date].push(s);
+        });
+        const availableDates = new Set(Object.keys(slotsByDate));
+
+        const monthNames = ['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+        const today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+        let selectedDate = null;
+        let selectedSlotId = null;
+
+        const grid = document.getElementById('cal-grid');
+        const label = document.getElementById('cal-month-label');
+        const timeSlotsSection = document.getElementById('time-slots-section');
+        const timeSlotsContainer = document.getElementById('time-slots');
+        const slotIdInput = document.getElementById('slot_id');
+        const bookBtn = document.getElementById('book-btn');
+
+        function renderCalendar() {
+            label.textContent = monthNames[currentMonth] + ' ' + currentYear;
+            grid.innerHTML = '';
+
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            let startDay = firstDay.getDay() - 1; // Monday = 0
+            if (startDay < 0) startDay = 6;
+
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            // Empty cells before first day
+            for (let i = 0; i < startDay; i++) {
+                grid.innerHTML += '<div></div>';
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = currentYear + '-' + String(currentMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+                const hasSlots = availableDates.has(dateStr);
+                const isSelected = selectedDate === dateStr;
+                const isPast = new Date(dateStr) < new Date(today.toISOString().split('T')[0]);
+
+                const cell = document.createElement('button');
+                cell.type = 'button';
+                cell.textContent = d;
+                cell.className = 'relative w-full aspect-square rounded-full text-sm font-medium transition-all flex items-center justify-center ';
+
+                if (isSelected) {
+                    cell.className += 'bg-secondary text-white';
+                } else if (hasSlots && !isPast) {
+                    cell.className += 'text-secondary border-2 border-secondary/40 hover:bg-secondary/10 cursor-pointer';
+                } else {
+                    cell.className += 'text-gray-300 cursor-default';
+                }
+
+                if (hasSlots && !isPast) {
+                    cell.addEventListener('click', function() {
+                        selectedDate = dateStr;
+                        selectedSlotId = null;
+                        slotIdInput.value = '';
+                        updateBookBtn();
+                        renderCalendar();
+                        showTimeSlots(dateStr);
+                    });
+                }
+
+                grid.appendChild(cell);
+            }
+        }
+
+        function showTimeSlots(dateStr) {
+            const dateSlots = slotsByDate[dateStr] || [];
+            timeSlotsContainer.innerHTML = '';
+
+            if (dateSlots.length === 0) {
+                timeSlotsSection.classList.add('hidden');
+                return;
+            }
+
+            timeSlotsSection.classList.remove('hidden');
+
+            dateSlots.forEach(s => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'px-4 py-2.5 rounded-xl border-2 text-sm font-medium transition-all ';
+
+                if (selectedSlotId === s.id) {
+                    btn.className += 'border-secondary bg-secondary/5 text-secondary';
+                } else {
+                    btn.className += 'border-gray-200 text-gray-600 hover:border-secondary/50 hover:bg-gray-50';
+                }
+
+                btn.innerHTML = '<span class="font-semibold">' + s.start + '</span><span class="text-gray-400 mx-1">—</span><span class="font-semibold">' + s.end + '</span>';
+
+                btn.addEventListener('click', function() {
+                    selectedSlotId = s.id;
+                    slotIdInput.value = s.id;
+                    updateBookBtn();
+                    showTimeSlots(dateStr);
+                });
+
+                timeSlotsContainer.appendChild(btn);
+            });
+        }
+
+        function updateBookBtn() {
+            const hasTopic = document.getElementById('topic').value.trim().length > 0;
+            bookBtn.disabled = !(selectedSlotId && hasTopic);
+        }
+
+        document.getElementById('topic').addEventListener('input', updateBookBtn);
+
+        document.getElementById('cal-prev').addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        });
+        document.getElementById('cal-next').addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderCalendar();
+        });
+
+        renderCalendar();
+    })();
+    </script>
+
+    {% else %}
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 text-center">
+        <p class="text-gray-500 text-sm">Aucun créneau disponible pour le moment.</p>
+        <p class="text-xs text-gray-400 mt-1">De nouveaux créneaux seront bientôt ajoutes.</p>
+    </div>
+    {% endif %}
+
+{% else %}
+<!-- Limit reached -->
+<div class="bg-white border border-gray-200 rounded-2xl p-6 text-center">
+    <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-50 mb-4">
+        <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </div>
+    <p class="text-gray-600 text-sm mb-1 font-medium">Limite de rendez-vous atteinte</p>
+    <p class="text-gray-500 text-xs mb-4">Vous avez utilise vos {{ meetings_limit }} rendez-vous inclus dans votre plan.</p>
+    <a href="{% url 'dashboard:plan' %}" class="inline-flex items-center px-5 py-2.5 bg-accent text-white rounded-full font-semibold text-sm hover:bg-red-700 transition-colors shadow-lg shadow-accent/25">
+        Passer au Premium — reunions illimitees
+    </a>
+</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

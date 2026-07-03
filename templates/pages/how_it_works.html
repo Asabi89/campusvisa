@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Fonctionnement{% endblock %}
+
+{% block content %}
+<section class="pt-28 pb-16 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-xs sm:text-sm uppercase tracking-wide text-accent font-semibold mb-3">Comment ça marche</p>
+        <h1 class="font-satoshi font-bold text-3xl sm:text-5xl text-secondary leading-tight">Un parcours simple en 4 étapes</h1>
+        <p class="mt-5 text-gray-600 text-base sm:text-lg max-w-3xl mx-auto">
+            Visanextstep vous guide avec une methode claire, des actions prioritaires et un accompagnement adapté à votre profil.
+        </p>
+    </div>
+</section>
+
+<section class="py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-8 lg:gap-10">
+            <article class="rounded-2xl border border-gray-200 p-6">
+                <p class="text-xs font-semibold tracking-wide text-accent uppercase">Étape 1</p>
+                <h2 class="font-satoshi text-2xl font-bold text-secondary mt-2">Evaluation gratuite</h2>
+                <p class="text-sm text-gray-600 mt-3 leading-relaxed">Vous répondez à un questionnaire rapide. Nous analysons vos objectifs, vos contraintes et vos priorites.</p>
+            </article>
+            <article class="rounded-2xl border border-gray-200 p-6">
+                <p class="text-xs font-semibold tracking-wide text-accent uppercase">Étape 2</p>
+                <h2 class="font-satoshi text-2xl font-bold text-secondary mt-2">Plan recommande</h2>
+                <p class="text-sm text-gray-600 mt-3 leading-relaxed">Vous recevez une formule adaptee (Basique, Standard ou Premium) pour avancer sans depenser inutilement.</p>
+            </article>
+            <article class="rounded-2xl border border-gray-200 p-6">
+                <p class="text-xs font-semibold tracking-wide text-accent uppercase">Étape 3</p>
+                <h2 class="font-satoshi text-2xl font-bold text-secondary mt-2">Preparation du dossier</h2>
+                <p class="text-sm text-gray-600 mt-3 leading-relaxed">Nous vous aidons à structurer Campus France, vérifier les pieces et éviter les erreurs frequentes.</p>
+            </article>
+            <article class="rounded-2xl border border-gray-200 p-6">
+                <p class="text-xs font-semibold tracking-wide text-accent uppercase">Étape 4</p>
+                <h2 class="font-satoshi text-2xl font-bold text-secondary mt-2">Depot et suivi</h2>
+                <p class="text-sm text-gray-600 mt-3 leading-relaxed">Vous deposez votre dossier avec confiance. Nous restons disponibles pour les ajustements jusqu'au visa.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-satoshi font-bold text-2xl sm:text-3xl text-secondary text-center mb-8">Ce que vous obtenez concretement</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="rounded-xl bg-white border border-gray-200 p-5">
+                <p class="font-semibold text-secondary text-sm">Checklist claire</p>
+                <p class="text-xs text-gray-600 mt-2">Les priorites du moment, sans confusion.</p>
+            </div>
+            <div class="rounded-xl bg-white border border-gray-200 p-5">
+                <p class="font-semibold text-secondary text-sm">Suivi en ligne</p>
+                <p class="text-xs text-gray-600 mt-2">Vos étapes visibles en temps reel.</p>
+            </div>
+            <div class="rounded-xl bg-white border border-gray-200 p-5">
+                <p class="font-semibold text-secondary text-sm">Aide documentaire</p>
+                <p class="text-xs text-gray-600 mt-2">Relectures et retours actionnables.</p>
+            </div>
+            <div class="rounded-xl bg-white border border-gray-200 p-5">
+                <p class="font-semibold text-secondary text-sm">Support conseiller</p>
+                <p class="text-xs text-gray-600 mt-2">Selon votre plan, par message et/ou reunion.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="font-satoshi font-bold text-2xl sm:text-3xl text-secondary">Pret à commencer ?</h2>
+        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">Faites l'évaluation gratuite et obtenez votre plan recommande en quelques minutes.</p>
+        <div class="mt-7 flex flex-col sm:flex-row justify-center gap-3">
+            <a href="{% url 'account_signup' %}" class="inline-flex items-center justify-center bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">Démarrer maintenant</a>
+            <a href="{% url 'pages:pricing' %}" class="inline-flex items-center justify-center bg-gray-100 text-secondary px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors">Voir les tarifs</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

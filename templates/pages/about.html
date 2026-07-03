@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}À propos{% endblock %}
+
+{% block content %}
+<section class="pt-28 pb-16 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="text-xs sm:text-sm uppercase tracking-wide text-accent font-semibold mb-3">À propos de Visanextstep</p>
+        <h1 class="font-satoshi font-bold text-3xl sm:text-5xl text-secondary leading-tight">
+            Un accompagnement humain pour reussir votre projet d'études en France
+        </h1>
+        <p class="mt-5 text-gray-600 text-base sm:text-lg max-w-3xl leading-relaxed">
+            Visanextstep aide les étudiants à avancer avec methode, clarté et confiance: de l'orientation initiale jusqu'au visa.
+            Notre mission est simple: vous faire gagner du temps, éviter les erreurs critiques et vous accompagner à chaque étape.
+        </p>
+    </div>
+</section>
+
+<section class="py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-5 sm:gap-6">
+            <article class="rounded-2xl border border-gray-200 p-6">
+                <h2 class="font-satoshi text-xl font-semibold text-secondary mb-2">Notre vision</h2>
+                <p class="text-sm text-gray-600 leading-relaxed">Rendre l'accès aux études en France plus transparent, plus simple et plus equitable pour les étudiants africains.</p>
+            </article>
+            <article class="rounded-2xl border border-gray-200 p-6">
+                <h2 class="font-satoshi text-xl font-semibold text-secondary mb-2">Notre methode</h2>
+                <p class="text-sm text-gray-600 leading-relaxed">Un parcours structure en étapes claires: évaluation, plan adapté, dossier, suivi des documents et coaching entretien.</p>
+            </article>
+            <article class="rounded-2xl border border-gray-200 p-6">
+                <h2 class="font-satoshi text-xl font-semibold text-secondary mb-2">Notre promesse</h2>
+                <p class="text-sm text-gray-600 leading-relaxed">Pas de jargon inutile. Des actions concrètes, des retours rapides et un suivi personalisé jusqu'au dépôt du visa.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-satoshi font-bold text-2xl sm:text-3xl text-secondary mb-8">Pourquoi les étudiants nous choisissent</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="rounded-2xl bg-white border border-gray-200 p-5">
+                <p class="font-satoshi text-3xl font-bold text-secondary">500+</p>
+                <p class="text-sm text-gray-600 mt-2">Étudiants accompagnes</p>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 p-5">
+                <p class="font-satoshi text-3xl font-bold text-accent">95%</p>
+                <p class="text-sm text-gray-600 mt-2">Dossiers finalises avec succès</p>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 p-5">
+                <p class="font-satoshi text-3xl font-bold text-secondary">24h</p>
+                <p class="text-sm text-gray-600 mt-2">Delai moyen de réponse</p>
+            </div>
+            <div class="rounded-2xl bg-white border border-gray-200 p-5">
+                <p class="font-satoshi text-3xl font-bold text-secondary">1:1</p>
+                <p class="text-sm text-gray-600 mt-2">Suivi individuel selon le plan</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="font-satoshi font-bold text-2xl sm:text-3xl text-secondary">Pret à lancer votre dossier ?</h2>
+        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">Faites l'évaluation gratuite et recevez une recommandation de plan en quelques minutes.</p>
+        <div class="mt-7 flex flex-col sm:flex-row justify-center gap-3">
+            <a href="{% url 'account_signup' %}" class="inline-flex items-center justify-center bg-accent text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">Démarrer</a>
+            <a href="{% url 'pages:contact' %}" class="inline-flex items-center justify-center bg-gray-100 text-secondary px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors">Parler à un conseiller</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

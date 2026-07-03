@@ -1,0 +1,184 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block dashboard_title %}Types de documents{% endblock %}
+{% block page_header %}Types de documents{% endblock %}
+
+{% block dashboard_content %}
+<!-- Add Type Button & Create Form -->
+<div class="mb-6">
+    <button type="button" onclick="document.getElementById('create-form').classList.toggle('hidden')" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">
+        + Ajouter un type
+    </button>
+
+    <div id="create-form" class="hidden mt-4 bg-white rounded-2xl border border-gray-100 p-5">
+        <h3 class="font-satoshi font-semibold text-secondary mb-4">Nouveau type de document</h3>
+        <form method="post" action="{% url 'admin_panel:document_types' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 font-inter">Nom</label>
+                    <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 font-inter">Conseil</label>
+                    <input type="text" name="tip" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary" placeholder="Conseil affiche aux étudiants">
+                    <p class="text-[11px] text-gray-400 mt-1">Conseil affiche aux étudiants</p>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-xs font-semibold text-gray-500 mb-1 font-inter">Description</label>
+                <textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary"></textarea>
+            </div>
+            <div class="flex items-center gap-4 mb-4">
+                <label class="flex items-center gap-2 text-sm text-gray-700">
+                    <input type="checkbox" name="is_required" class="rounded border-gray-300 text-secondary focus:ring-secondary">
+                    <span>Requis</span>
+                </label>
+            </div>
+            <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">Créer</button>
+        </form>
+    </div>
+</div>
+
+<!-- Document Types List -->
+<div id="doc-types-list" class="space-y-4">
+    {% for dt in doc_types %}
+    <div class="bg-white rounded-2xl border border-gray-100 p-5" draggable="true" data-id="{{ dt.pk }}">
+        <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-3 mb-1">
+                    <span class="cursor-grab text-gray-300 hover:text-gray-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+                    </span>
+                    <h3 class="font-satoshi font-semibold text-secondary">{{ dt.name }}</h3>
+                    {% if dt.is_required %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Requis</span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Optionnel</span>
+                    {% endif %}
+                    <span class="text-xs text-gray-400">Ordre: {{ dt.order }}</span>
+                </div>
+                {% if dt.description %}
+                <p class="text-sm text-gray-600 ml-8">{{ dt.description }}</p>
+                {% endif %}
+                {% if dt.tip %}
+                <p class="text-xs text-gray-400 italic ml-8 mt-1">{{ dt.tip }}</p>
+                {% endif %}
+            </div>
+            <div class="flex items-center gap-2 shrink-0 ml-4">
+                <button type="button" onclick="toggleEdit({{ dt.pk }})" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary/10 text-secondary hover:bg-secondary/20">Modifier</button>
+                <form method="post" action="{% url 'admin_panel:document_types' %}" onsubmit="return confirm('Supprimer ce type ?')">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="pk" value="{{ dt.pk }}">
+                    <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200">Supprimer</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Inline Edit Form -->
+        <div id="edit-form-{{ dt.pk }}" class="hidden mt-4 pt-4 border-t border-gray-100">
+            <form method="post" action="{% url 'admin_panel:document_types' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="pk" value="{{ dt.pk }}">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 font-inter">Nom</label>
+                        <input type="text" name="name" value="{{ dt.name }}" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 font-inter">Conseil</label>
+                        <input type="text" name="tip" value="{{ dt.tip|default:'' }}" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 font-inter">Description</label>
+                    <textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">{{ dt.description|default:'' }}</textarea>
+                </div>
+                <div class="flex items-center gap-4 mb-4">
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" name="is_required" {% if dt.is_required %}checked{% endif %} class="rounded border-gray-300 text-secondary focus:ring-secondary">
+                        <span>Requis</span>
+                    </label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">Enregistrer</button>
+                    <button type="button" onclick="toggleEdit({{ dt.pk }})" class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+        <p class="text-sm text-gray-400">Aucun type de document configure</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleEdit(pk) {
+    document.getElementById('edit-form-' + pk).classList.toggle('hidden');
+}
+
+function getCookie(name) {
+    let v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+}
+
+// Drag-to-reorder
+(function() {
+    const list = document.getElementById('doc-types-list');
+    if (!list) return;
+
+    let dragEl = null;
+
+    list.addEventListener('dragstart', function(e) {
+        dragEl = e.target.closest('[data-id]');
+        if (dragEl) {
+            dragEl.classList.add('opacity-50');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+    });
+
+    list.addEventListener('dragend', function() {
+        if (dragEl) {
+            dragEl.classList.remove('opacity-50');
+            dragEl = null;
+        }
+    });
+
+    list.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const target = e.target.closest('[data-id]');
+        if (target && target !== dragEl) {
+            const rect = target.getBoundingClientRect();
+            const mid = rect.top + rect.height / 2;
+            if (e.clientY < mid) {
+                list.insertBefore(dragEl, target);
+            } else {
+                list.insertBefore(dragEl, target.nextSibling);
+            }
+        }
+    });
+
+    list.addEventListener('drop', function(e) {
+        e.preventDefault();
+        const cards = list.querySelectorAll('[data-id]');
+        const order = Array.from(cards).map(function(c) { return parseInt(c.dataset.id); });
+        fetch("{% url 'admin_panel:document_types_reorder' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ order: order })
+        });
+    });
+})();
+</script>
+{% endblock %}

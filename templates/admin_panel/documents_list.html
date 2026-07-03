@@ -1,0 +1,73 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block dashboard_title %}Documents{% endblock %}
+{% block page_header %}Documents{% endblock %}
+
+{% block dashboard_content %}
+<!-- Search -->
+<div class="bg-white rounded-2xl border border-gray-100 p-5 mb-6">
+    <form method="get" action="{% url 'admin_panel:documents' %}" class="flex flex-col sm:flex-row gap-3">
+        <input type="text" name="q" value="{{ search|default:'' }}" placeholder="Rechercher un étudiant (nom, email)..."
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+        <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">Rechercher</button>
+    </form>
+</div>
+
+<!-- Students Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for student in students %}
+    <a href="{% url 'admin_panel:student_documents' student.pk %}" class="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all group">
+        <div class="flex items-center space-x-3">
+            {% if student.avatar %}
+            <img src="{{ student.avatar.url }}" alt="" class="w-11 h-11 rounded-full object-cover shrink-0">
+            {% else %}
+            <div class="w-11 h-11 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                <span class="text-secondary text-sm font-bold">{% if student.first_name %}{{ student.first_name|first|upper }}{% else %}{{ student.email|first|upper }}{% endif %}</span>
+            </div>
+            {% endif %}
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-900 truncate group-hover:text-secondary transition-colors">{% if student.first_name %}{{ student.first_name }} {{ student.last_name }}{% else %}{{ student.email }}{% endif %}</p>
+                <p class="text-xs text-gray-400 truncate">{{ student.email }}</p>
+            </div>
+            <div class="shrink-0 flex flex-col items-end space-y-1">
+                {% if student.doc_count > 0 %}
+                <span class="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded-full text-xs font-bold {% if student.pending_count > 0 %}bg-amber-100 text-amber-700{% else %}bg-gray-100 text-gray-600{% endif %}">
+                    {{ student.doc_count }}
+                </span>
+                {% endif %}
+                {% if student.pending_count > 0 %}
+                <span class="text-[10px] text-amber-600 font-medium">{{ student.pending_count }} en attente</span>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+    {% empty %}
+    <div class="col-span-full bg-white rounded-2xl border border-gray-100 p-8 text-center">
+        <svg class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <p class="text-sm text-gray-400">Aucun étudiant trouve</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% if students_page and students_page.paginator.num_pages > 1 %}
+<div class="mt-6 flex items-center justify-between bg-white border border-gray-100 rounded-2xl px-4 py-3">
+    <p class="text-xs text-gray-500">
+        Page {{ students_page.number }} / {{ students_page.paginator.num_pages }}
+    </p>
+    <div class="flex items-center gap-2">
+        {% if students_page.has_previous %}
+        <a href="?q={{ search|urlencode }}&page={{ students_page.previous_page_number }}"
+           class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200">
+            Precedent
+        </a>
+        {% endif %}
+        {% if students_page.has_next %}
+        <a href="?q={{ search|urlencode }}&page={{ students_page.next_page_number }}"
+           class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary text-white hover:bg-secondary/90">
+            Suivant
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

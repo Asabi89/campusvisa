@@ -1,0 +1,150 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block dashboard_title %}Étudiants{% endblock %}
+{% block page_header %}Étudiants{% endblock %}
+
+{% block dashboard_content %}
+<!-- Filters -->
+<div class="bg-white rounded-2xl border border-gray-100 p-5 mb-6">
+    <form method="GET" action="{% url 'admin_panel:students' %}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <input type="text" name="q" value="{{ q }}" placeholder="Rechercher par nom ou email..."
+               class="w-full sm:flex-1 px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+        <select name="plan" class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+            <option value="">Tous les plans</option>
+            {% for plan in plans %}
+            <option value="{{ plan.pk }}" {% if plan_filter == plan.pk|stringformat:"d" %}selected{% endif %}>{{ plan.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="status" class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+            <option value="">Tous</option>
+            <option value="active" {% if status_filter == "active" %}selected{% endif %}>Actif</option>
+            <option value="pending" {% if status_filter == "pending" %}selected{% endif %}>En attente</option>
+            <option value="no_plan" {% if status_filter == "no_plan" or status_filter == "none" %}selected{% endif %}>Sans plan</option>
+        </select>
+        <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">
+            Rechercher
+        </button>
+    </form>
+</div>
+
+<!-- Desktop Table -->
+<div class="bg-white rounded-2xl border border-gray-100 hidden md:block">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="border-b border-gray-100">
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Étudiant</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Plan</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Evaluation</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Inscrit le</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for student in students %}
+                <tr class="hover:bg-gray-50/50 transition-colors">
+                    <td class="px-5 py-3">
+                        <div class="flex items-center space-x-3">
+                            {% if student.avatar %}
+                            <img src="{{ student.avatar.url }}" alt="" class="w-8 h-8 rounded-full object-cover shrink-0">
+                            {% else %}
+                            <div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                                <span class="text-secondary text-xs font-bold">{% if student.first_name %}{{ student.first_name|first|upper }}{% else %}{{ student.email|first|upper }}{% endif %}</span>
+                            </div>
+                            {% endif %}
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">{% if student.first_name %}{{ student.first_name }} {{ student.last_name }}{% else %}{{ student.email }}{% endif %}</p>
+                                <p class="text-xs text-gray-500 truncate">{{ student.email }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-5 py-3">
+                        {% if student.subscription and student.subscription.plan %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">{{ student.subscription.plan.name }}</span>
+                        {% else %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Aucun</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3">
+                        {% if student.subscription %}
+                            {% if student.subscription.status == 'active' %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>
+                            {% elif student.subscription.status == 'pending' %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En attente</span>
+                            {% else %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Aucun</span>
+                            {% endif %}
+                        {% else %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Aucun</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3">
+                        {% if student.has_completed_onboarding %}
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        {% else %}
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3 text-sm text-gray-500">{{ student.created_at|date:"d/m/Y" }}</td>
+                    <td class="px-5 py-3">
+                        <a href="{% url 'admin_panel:student_detail' student.pk %}" class="text-sm font-medium text-secondary hover:text-secondary/80">Voir</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-5 py-8 text-center">
+                        <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <p class="text-sm text-gray-400">Aucun étudiant trouve</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Mobile Cards -->
+<div class="md:hidden space-y-3">
+    {% for student in students %}
+    <a href="{% url 'admin_panel:student_detail' student.pk %}" class="block bg-white rounded-2xl border border-gray-100 p-4">
+        <div class="flex items-center space-x-3 mb-3">
+            {% if student.avatar %}
+            <img src="{{ student.avatar.url }}" alt="" class="w-10 h-10 rounded-full object-cover shrink-0">
+            {% else %}
+            <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                <span class="text-secondary text-sm font-bold">{% if student.first_name %}{{ student.first_name|first|upper }}{% else %}{{ student.email|first|upper }}{% endif %}</span>
+            </div>
+            {% endif %}
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-gray-900 truncate">{% if student.first_name %}{{ student.first_name }} {{ student.last_name }}{% else %}{{ student.email }}{% endif %}</p>
+                <p class="text-xs text-gray-500 truncate">{{ student.email }}</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+            {% if student.subscription and student.subscription.plan %}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">{{ student.subscription.plan.name }}</span>
+            {% else %}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Aucun</span>
+            {% endif %}
+            {% if student.subscription %}
+                {% if student.subscription.status == 'active' %}
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>
+                {% elif student.subscription.status == 'pending' %}
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En attente</span>
+                {% else %}
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Aucun</span>
+                {% endif %}
+            {% else %}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Aucun</span>
+            {% endif %}
+        </div>
+    </a>
+    {% empty %}
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+        <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <p class="text-sm text-gray-400">Aucun étudiant trouve</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

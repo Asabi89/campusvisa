@@ -1,0 +1,192 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block dashboard_title %}Tableau de bord{% endblock %}
+{% block page_header %}Tableau de bord{% endblock %}
+
+{% block dashboard_content %}
+<!-- KPI Cards -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-2xl p-5 border border-gray-100">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+        </div>
+        <p class="text-2xl font-bold text-secondary font-satoshi">{{ total_students }}</p>
+        <p class="text-xs text-gray-500 mt-1">Étudiants inscrits</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-5 border border-gray-100">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+        </div>
+        <p class="text-2xl font-bold text-secondary font-satoshi">{{ active_subs }}</p>
+        <p class="text-xs text-gray-500 mt-1">Abonnements actifs</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-5 border border-gray-100">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+        </div>
+        <p class="text-2xl font-bold text-secondary font-satoshi">{{ pending_docs }}</p>
+        <p class="text-xs text-gray-500 mt-1">Documents en attente</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-5 border border-gray-100">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+        </div>
+        <p class="text-2xl font-bold text-secondary font-satoshi">{{ upcoming_meetings }}</p>
+        <p class="text-xs text-gray-500 mt-1">Rendez-vous à venir</p>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white rounded-2xl border border-gray-100 p-5 mb-8">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="font-satoshi font-semibold text-secondary">Actions rapides</h2>
+        <span class="text-xs text-gray-400">Raccourcis staff</span>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <a href="{% url 'admin_panel:documents' %}?status=pending" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-amber-100 text-amber-700 text-sm font-semibold hover:bg-amber-200 transition-colors">
+            Revoir documents
+        </a>
+        <a href="{% url 'admin_panel:meetings' %}?tab=slots" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-blue-100 text-blue-700 text-sm font-semibold hover:bg-blue-200 transition-colors">
+            Gérer créneaux
+        </a>
+        <a href="{% url 'admin_panel:messages' %}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-secondary/10 text-secondary text-sm font-semibold hover:bg-secondary/20 transition-colors">
+            Ouvrir messages
+        </a>
+        <a href="{% url 'admin_panel:notifications' %}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-accent/10 text-accent text-sm font-semibold hover:bg-accent/20 transition-colors">
+            Envoyer notification
+        </a>
+    </div>
+</div>
+
+<!-- Two-column layout -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Pending Documents -->
+    <div class="bg-white rounded-2xl border border-gray-100">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <h2 class="font-satoshi font-semibold text-secondary">Documents en attente</h2>
+            {% if pending_docs %}
+            <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">{{ pending_docs }}</span>
+            {% endif %}
+        </div>
+        <div class="divide-y divide-gray-50">
+            {% for doc in recent_docs %}
+            <div class="px-5 py-3 flex items-center justify-between">
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                        {% if doc.is_custom %}{{ doc.custom_name }}{% elif doc.document_type %}{{ doc.document_type.name }}{% else %}Document{% endif %}
+                    </p>
+                    <p class="text-xs text-gray-500 truncate">{{ doc.user.email }} · {{ doc.uploaded_at|timesince }} ago</p>
+                </div>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En attente</span>
+            </div>
+            {% empty %}
+            <div class="px-5 py-8 text-center">
+                <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p class="text-sm text-gray-400">Aucun document en attente</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Upcoming Meetings -->
+    <div class="bg-white rounded-2xl border border-gray-100">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <h2 class="font-satoshi font-semibold text-secondary">Prochains rendez-vous</h2>
+            {% if upcoming_meetings %}
+            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">{{ upcoming_meetings }}</span>
+            {% endif %}
+        </div>
+        <div class="divide-y divide-gray-50">
+            {% for meeting in upcoming_meeting_list %}
+            <div class="px-5 py-3 flex items-center justify-between">
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-gray-900 truncate">{% if meeting.student.first_name %}{{ meeting.student.first_name }} {{ meeting.student.last_name }}{% else %}{{ meeting.student.email }}{% endif %}</p>
+                    <p class="text-xs text-gray-500 truncate">{{ meeting.student.email }}</p>
+                </div>
+                <div class="text-right shrink-0 ml-3">
+                    <p class="text-sm font-semibold text-secondary">{{ meeting.slot.date|date:"d M" }}</p>
+                    <p class="text-xs text-gray-500">{{ meeting.slot.start_time|time:"H:i" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="px-5 py-8 text-center">
+                <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <p class="text-sm text-gray-400">Aucun rendez-vous prevu</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Students -->
+    <div class="bg-white rounded-2xl border border-gray-100">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <h2 class="font-satoshi font-semibold text-secondary">Nouveaux étudiants</h2>
+        </div>
+        <div class="divide-y divide-gray-50">
+            {% for student in recent_students %}
+            <div class="px-5 py-3 flex items-center space-x-3">
+                {% if student.avatar %}
+                <img src="{{ student.avatar.url }}" alt="" class="w-8 h-8 rounded-full object-cover shrink-0">
+                {% else %}
+                <div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                    <span class="text-secondary text-xs font-bold">{% if student.first_name %}{{ student.first_name|first|upper }}{% else %}{{ student.email|first|upper }}{% endif %}</span>
+                </div>
+                {% endif %}
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-gray-900 truncate">{% if student.first_name %}{{ student.first_name }} {{ student.last_name }}{% else %}{{ student.email }}{% endif %}</p>
+                    <p class="text-xs text-gray-500">Inscrit {{ student.created_at|timesince }} ago</p>
+                </div>
+                <div class="shrink-0">
+                    {% if student.has_completed_onboarding %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Evaluation faite</span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">En cours</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="px-5 py-8 text-center">
+                <p class="text-sm text-gray-400">Aucun étudiant inscrit</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Payments -->
+    <div class="bg-white rounded-2xl border border-gray-100">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <h2 class="font-satoshi font-semibold text-secondary">Derniers paiements</h2>
+        </div>
+        <div class="divide-y divide-gray-50">
+            {% for sub in recent_payments %}
+            <div class="px-5 py-3 flex items-center justify-between">
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ sub.user.email }}</p>
+                    <p class="text-xs text-gray-500">{{ sub.plan.name }} · {{ sub.get_payment_method_display }}</p>
+                </div>
+                <div class="shrink-0 ml-3">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="px-5 py-8 text-center">
+                <p class="text-sm text-gray-400">Aucun paiement recent</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

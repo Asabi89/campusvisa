@@ -1,0 +1,242 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block dashboard_title %}Rendez-vous{% endblock %}
+{% block page_header %}Rendez-vous{% endblock %}
+
+{% block dashboard_content %}
+<!-- Tab Bar -->
+<div class="flex space-x-6 border-b border-gray-200 mb-6">
+    <a href="?tab=meetings"
+       class="pb-3 text-sm font-inter {% if tab == 'meetings' %}border-b-2 border-secondary text-secondary font-semibold{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+        Rendez-vous
+    </a>
+    <a href="?tab=slots"
+       class="pb-3 text-sm font-inter {% if tab == 'slots' %}border-b-2 border-secondary text-secondary font-semibold{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+        Creneaux
+    </a>
+</div>
+
+{% if tab == 'meetings' %}
+<!-- ===================== MEETINGS TAB ===================== -->
+
+<!-- Filter Bar -->
+<form method="get" action="{% url 'admin_panel:meetings' %}" class="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
+    <input type="hidden" name="tab" value="meetings">
+    <div class="flex flex-col sm:flex-row gap-3">
+        <input type="text" name="m_search" value="{{ m_search|default:'' }}" placeholder="Rechercher un étudiant..."
+               class="w-full sm:flex-1 px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+        <input type="date" name="m_date" value="{{ m_date|default:'' }}"
+               class="w-full sm:w-44 px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+        <select name="m_status"
+                class="w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+            <option value="">Tous les statuts</option>
+            {% for value, label in meeting_status_choices %}
+            <option value="{{ value }}" {% if m_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">
+            Filtrer
+        </button>
+    </div>
+</form>
+
+<!-- Meetings Table -->
+<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm font-inter">
+            <thead>
+                <tr class="border-b border-gray-100 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th class="px-5 py-3">Date</th>
+                    <th class="px-5 py-3">Heure</th>
+                    <th class="px-5 py-3">Étudiant</th>
+                    <th class="px-5 py-3">Sujet</th>
+                    <th class="px-5 py-3">Statut</th>
+                    <th class="px-5 py-3">Lien Meet</th>
+                    <th class="px-5 py-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for meeting in meetings %}
+                <tr class="hover:bg-gray-50/50">
+                    <td class="px-5 py-3 whitespace-nowrap text-gray-700">{{ meeting.slot.date|date:"d/m/Y" }}</td>
+                    <td class="px-5 py-3 whitespace-nowrap text-gray-700">{{ meeting.slot.start_time|time:"H:i" }}-{{ meeting.slot.end_time|time:"H:i" }}</td>
+                    <td class="px-5 py-3 whitespace-nowrap">
+                        <a href="{% url 'admin_panel:student_detail' meeting.student.pk %}" class="text-secondary hover:underline">
+                            <p class="font-medium">{% if meeting.student.first_name %}{{ meeting.student.first_name }} {{ meeting.student.last_name }}{% else %}{{ meeting.student.email }}{% endif %}</p>
+                            <p class="text-xs text-gray-500">{{ meeting.student.email }}</p>
+                        </a>
+                    </td>
+                    <td class="px-5 py-3 text-gray-700">{{ meeting.topic }}</td>
+                    <td class="px-5 py-3 whitespace-nowrap">
+                        {% if meeting.status == 'scheduled' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Planifie</span>
+                        {% elif meeting.status == 'completed' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Termine</span>
+                        {% elif meeting.status == 'cancelled' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Annule</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3 whitespace-nowrap">
+                        {% if meeting.meeting_link %}
+                        <a href="{{ meeting.meeting_link }}" target="_blank" rel="noopener" class="text-secondary hover:underline text-xs font-semibold">Rejoindre</a>
+                        {% else %}
+                        <span class="text-gray-400">&mdash;</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3 whitespace-nowrap">
+                        {% if meeting.status == 'scheduled' %}
+                        <div class="flex items-center space-x-2">
+                            <form method="post" action="{% url 'admin_panel:meeting_update' meeting.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="completed">
+                                <button type="submit" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
+                                    Terminer
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'admin_panel:meeting_update' meeting.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="cancelled">
+                                <button type="submit" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-colors">
+                                    Annuler
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-5 py-12 text-center">
+                        <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <p class="text-sm text-gray-400">Aucun rendez-vous trouve</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% else %}
+<!-- ===================== SLOTS TAB ===================== -->
+
+<!-- Slot Creation Forms -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- Single Slot -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+        <h2 class="font-satoshi font-semibold text-secondary mb-4">Ajouter un créneau</h2>
+        <form method="post" action="{% url 'admin_panel:slot_create' %}" class="space-y-3">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Date</label>
+                <input type="date" name="date" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Debut</label>
+                    <input type="time" name="start_time" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Fin</label>
+                    <input type="time" name="end_time" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                </div>
+            </div>
+            <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90 w-full">
+                Ajouter
+            </button>
+        </form>
+    </div>
+
+    <!-- Bulk Slot Creation -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+        <h2 class="font-satoshi font-semibold text-secondary mb-4">Creation en lot</h2>
+        <form method="post" action="{% url 'admin_panel:slots_bulk_create' %}" class="space-y-3">
+            {% csrf_token %}
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Date debut</label>
+                    <input type="date" name="start_date" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Date fin</label>
+                    <input type="date" name="end_date" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Heure debut</label>
+                    <input type="time" name="start_time" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Heure fin</label>
+                    <input type="time" name="end_time" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                </div>
+            </div>
+            <p class="text-xs text-gray-400">Crée un créneau par jour ouvrable (lun-ven).</p>
+            <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90 w-full">
+                Créer les créneaux
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Slots Table -->
+<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h2 class="font-satoshi font-semibold text-secondary">Creneaux à venir</h2>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm font-inter">
+            <thead>
+                <tr class="border-b border-gray-100 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th class="px-5 py-3">Date</th>
+                    <th class="px-5 py-3">Horaire</th>
+                    <th class="px-5 py-3">Statut</th>
+                    <th class="px-5 py-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for slot in slots %}
+                <tr class="hover:bg-gray-50/50">
+                    <td class="px-5 py-3 whitespace-nowrap text-gray-700">{{ slot.date|date:"d/m/Y" }}</td>
+                    <td class="px-5 py-3 whitespace-nowrap text-gray-700">{{ slot.start_time|time:"H:i" }}-{{ slot.end_time|time:"H:i" }}</td>
+                    <td class="px-5 py-3 whitespace-nowrap">
+                        {% if slot.is_booked %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Reserve</span>
+                        {% else %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Disponible</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3 whitespace-nowrap">
+                        {% if not slot.is_booked %}
+                        <form method="post" action="{% url 'admin_panel:slot_delete' slot.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-colors">
+                                Supprimer
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-5 py-12 text-center">
+                        <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <p class="text-sm text-gray-400">Aucun créneau disponible</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

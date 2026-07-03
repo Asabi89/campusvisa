@@ -1,0 +1,124 @@
+{% extends 'base_nextstep.html' %}
+{% load static %}
+{% block extra_head %}
+<style>
+    /* Apply 11px border radius */
+    a.bg-gold, a.bg-marine, button.bg-marine,
+    img.object-cover, .absolute.inset-0.transform,
+    .bg-white.p-8, .bg-marine.p-8, .bg-light.p-8,
+    .w-12.h-12, .w-16.h-16, .w-10.h-10,
+    input, select, textarea {
+        border-radius: 11px !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header Page -->
+    <section class="py-20 bg-marine text-white text-center">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Foire Aux Questions</h1>
+            <div class="w-16 h-1 bg-gold mx-auto mb-6"></div>
+            <p class="text-lg text-gray-300">Toutes les réponses à vos questions concernant nos services, nos tarifs et notre fonctionnement.</p>
+        </div>
+    </section>
+
+    <!-- FAQ Content -->
+    <section class="py-20 bg-light">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            
+            {% if faqs %}
+                {% for faq in faqs %}
+                <div class="bg-white border border-gray-200 rounded-[11px] overflow-hidden mb-4">
+                    <button class="w-full text-left px-6 py-4 font-bold text-marine flex justify-between items-center focus:outline-none faq-toggle-btn">
+                        <span>{{ faq.question }}</span>
+                        <svg class="w-5 h-5 text-gold transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="px-6 pb-4 text-gray-600 hidden">
+                        {{ faq.answer|linebreaksbr }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <h2 class="text-2xl font-bold text-marine mt-12 mb-6">Consulting & Stratégie</h2>
+            <!-- FAQ Item -->
+            <div class="bg-white border border-gray-200 rounded-[11px] overflow-hidden">
+                <button class="w-full text-left px-6 py-4 font-bold text-marine flex justify-between items-center focus:outline-none faq-toggle-btn">
+                    <span>Quels sont les tarifs de vos services de consulting ?</span>
+                    <svg class="w-5 h-5 text-gold transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="px-6 pb-4 text-gray-600 hidden">
+                    Nos tarifs sont sur-mesure et s'adaptent aux besoins spécifiques de votre entreprise ou de votre projet. Contactez-nous pour obtenir un devis gratuit et personnalisé.
+                </div>
+            </div>
+            <!-- FAQ Item -->
+            <div class="bg-white border border-gray-200 rounded-[11px] overflow-hidden">
+                <button class="w-full text-left px-6 py-4 font-bold text-marine flex justify-between items-center focus:outline-none faq-toggle-btn">
+                    <span>Proposez-vous des consultations en ligne ?</span>
+                    <svg class="w-5 h-5 text-gold transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="px-6 pb-4 text-gray-600 hidden">
+                    Oui, la majorité de nos consultations et de notre accompagnement peuvent se faire entièrement en ligne, ce qui nous permet d'accompagner des clients partout dans le monde.
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-marine mt-12 mb-6">Campus France & Mobilité</h2>
+            <!-- FAQ Item -->
+            <div class="bg-white border border-gray-200 rounded-[11px] overflow-hidden">
+                <button class="w-full text-left px-6 py-4 font-bold text-marine flex justify-between items-center focus:outline-none faq-toggle-btn">
+                    <span>Comment se déroule la procédure Campus France avec vous ?</span>
+                    <svg class="w-5 h-5 text-gold transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="px-6 pb-4 text-gray-600 hidden">
+                    Nous vous accompagnons de A à Z : création de votre dossier, choix des universités, rédaction de vos lettres de motivation, préparation aux entretiens, jusqu'à la demande de visa et votre accueil en France.
+                </div>
+            </div>
+            <!-- FAQ Item -->
+            <div class="bg-white border border-gray-200 rounded-[11px] overflow-hidden">
+                <button class="w-full text-left px-6 py-4 font-bold text-marine flex justify-between items-center focus:outline-none faq-toggle-btn">
+                    <span>Garantissez-vous l'obtention du visa ?</span>
+                    <svg class="w-5 h-5 text-gold transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="px-6 pb-4 text-gray-600 hidden">
+                    Nous maximisons vos chances en montant un dossier solide et en vous préparant minutieusement, mais la décision finale revient toujours aux autorités consulaires.
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="text-center mt-12 pt-12 border-t border-gray-200">
+                <p class="text-gray-600 mb-6">Vous ne trouvez pas la réponse à votre question ?</p>
+                <a href="{% url 'nextstep:contact' %}" class="inline-block bg-gold text-marine font-bold py-3 px-8 rounded-[11px] hover:bg-yellow-500 transition-colors" style="border-radius: 11px;">
+                    Contactez-nous
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // FAQ Accordion Logic
+    const faqBtns = document.querySelectorAll('.faq-toggle-btn');
+    faqBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('svg');
+            
+            // Close others
+            faqBtns.forEach(otherBtn => {
+                if (otherBtn !== btn) {
+                    otherBtn.nextElementSibling.classList.add('hidden');
+                    otherBtn.querySelector('svg').classList.remove('rotate-180');
+                }
+            });
+
+            // Toggle current
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        });
+    });
+});
+</script>
+{% endblock %}
+

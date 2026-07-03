@@ -1,0 +1,102 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Connexion{% endblock %}
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col lg:flex-row">
+    <!-- Left Panel — Branding (hidden on mobile) -->
+    <div class="hidden lg:flex lg:w-1/2 bg-secondary relative flex-col items-center justify-center p-12 overflow-hidden">
+        <!-- Decorative circles -->
+        <div class="absolute -top-20 -left-20 w-72 h-72 bg-white/5 rounded-full"></div>
+        <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-white/5 rounded-full"></div>
+
+        <div class="relative z-10 text-center max-w-md">
+            <a href="{% url 'pages:home' %}" class="font-satoshi font-bold text-3xl tracking-tight text-white">
+                Visa<span class="text-accent">nextstep</span>
+            </a>
+
+            <img src="{% static 'img/passport-1-svgrepo-com.svg' %}" alt="Passport" class="w-48 h-48 mx-auto mt-12 mb-10 opacity-90">
+
+            <h2 class="font-satoshi font-bold text-2xl text-white mb-3">Bon retour parmi nous !</h2>
+            <p class="text-blue-200 text-sm leading-relaxed">Connectez-vous pour suivre votre dossier Campus France et avancer dans votre projet d'études en France.</p>
+        </div>
+    </div>
+
+    <!-- Right Panel — Form -->
+    <div class="flex-1 bg-gray-50 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        <!-- Mobile logo (visible only on small screens) -->
+        <div class="lg:hidden mb-8">
+            <a href="{% url 'pages:home' %}" class="font-satoshi font-bold text-2xl tracking-tight text-secondary">
+                Visa<span class="text-accent">nextstep</span>
+            </a>
+        </div>
+
+        <div class="w-full max-w-md">
+            <section class="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 lg:p-10">
+                <div class="mb-8">
+                    <h1 class="font-satoshi font-bold text-2xl sm:text-3xl text-secondary mb-2">Connexion</h1>
+                    <p class="text-gray-500 text-sm sm:text-base">Accédez à votre espace étudiant.</p>
+                </div>
+
+                <form method="post" action="{% url 'account_login' %}" class="space-y-5">
+                    {% csrf_token %}
+                    {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+                    {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                    {% endfor %}
+
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-50 border border-red-200 text-accent text-sm rounded-lg p-3">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div>
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<p class="mt-1 text-xs text-accent">{{ form.email.errors.0 }}</p>{% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1.5">{{ form.password.label }}</label>
+                        {{ form.password }}
+                        {% if form.password.errors %}<p class="mt-1 text-xs text-accent">{{ form.password.errors.0 }}</p>{% endif %}
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-3 text-sm text-gray-700">
+                            {{ form.remember_me }}
+                            <span>Se souvenir de moi</span>
+                        </label>
+                        <a href="/auth/password/reset/" class="text-sm text-gray-500 hover:text-secondary transition-colors">Mot de passe oublie ?</a>
+                    </div>
+
+                    <button type="submit" class="w-full bg-accent text-white px-6 py-3 rounded-xl font-semibold text-sm sm:text-base hover:bg-red-700 transition-colors shadow-lg shadow-accent/20">
+                        Se connecter
+                    </button>
+                </form>
+
+                <p class="text-center text-sm text-gray-500 mt-8">
+                    Pas encore de compte ?
+                    <a href="{% url 'account_signup' %}" class="text-secondary font-semibold hover:text-accent transition-colors">Créer un compte</a>
+                </p>
+            </section>
+
+            <p class="text-center mt-6">
+                <a href="{% url 'pages:home' %}" class="text-sm text-gray-400 hover:text-secondary transition-colors">
+                    &larr; Retour à l'accueil
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+

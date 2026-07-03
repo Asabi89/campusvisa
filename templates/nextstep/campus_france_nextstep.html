@@ -1,0 +1,118 @@
+{% extends 'base_nextstep.html' %}
+{% load static %}
+{% block extra_head %}
+<style>
+    /* Apply 11px border radius */
+    a.bg-gold, a.bg-marine, button.bg-marine,
+    img.object-cover, .absolute.inset-0.transform,
+    .bg-white.p-8, .bg-marine.p-8, .bg-light.p-8,
+    .w-12.h-12, .w-16.h-16, .w-10.h-10,
+    input, select, textarea {
+        border-radius: 11px !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+    <div class="bg-marine py-16 md:py-24 border-b-4 border-gold">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Mobilité Internationale : Campus France</h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                Notre service phare dédié aux étudiants africains. Nous vous accompagnons pas à pas pour réussir votre projet d'études en France.
+            </p>
+        </div>
+    </div>
+
+    <!-- Étapes de l'accompagnement -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-marine mb-4">Notre Accompagnement Complet</h2>
+                <div class="w-16 h-1 bg-gold mx-auto mb-6"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto">De la conception de votre projet d'études à votre installation en France, nous sommes à vos côtés à chaque étape critique.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-light p-8 border border-gray-200">
+                    <span class="text-gold font-bold text-5xl opacity-30 mb-4 block">01</span>
+                    <h3 class="text-xl font-bold text-marine mb-3">Choix de l'établissement</h3>
+                    <p class="text-gray-600">Orientation personnalisée et sélection des universités ou écoles en adéquation avec votre parcours et vos ambitions.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="bg-light p-8 border border-gray-200">
+                    <span class="text-gold font-bold text-5xl opacity-30 mb-4 block">02</span>
+                    <h3 class="text-xl font-bold text-marine mb-3">Admission</h3>
+                    <p class="text-gray-600">Aide à la constitution d'un dossier de candidature solide : CV, lettre de motivation et préparation aux entretiens d'admission.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="bg-light p-8 border border-gray-200">
+                    <span class="text-gold font-bold text-5xl opacity-30 mb-4 block">03</span>
+                    <h3 class="text-xl font-bold text-marine mb-3">Procédure Campus France</h3>
+                    <p class="text-gray-600">Création et suivi du dossier Études en France, vérification des documents et simulation de l'entretien pédagogique.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="bg-light p-8 border border-gray-200">
+                    <span class="text-gold font-bold text-5xl opacity-30 mb-4 block">04</span>
+                    <h3 class="text-xl font-bold text-marine mb-3">Demande de Visa</h3>
+                    <p class="text-gray-600">Accompagnement rigoureux pour la constitution du dossier de visa étudiant, minimisant les risques de refus.</p>
+                </div>
+                <!-- Step 5 -->
+                <div class="bg-light p-8 border border-gray-200">
+                    <span class="text-gold font-bold text-5xl opacity-30 mb-4 block">05</span>
+                    <h3 class="text-xl font-bold text-marine mb-3">Préparation au départ</h3>
+                    <p class="text-gray-600">Briefing avant le départ : assurance, logement temporaire, budget et conseils pour faciliter votre arrivée.</p>
+                </div>
+                <!-- Step 6 -->
+                <div class="bg-light p-8 border border-gray-200">
+                    <span class="text-gold font-bold text-5xl opacity-30 mb-4 block">06</span>
+                    <h3 class="text-xl font-bold text-marine mb-3">Accueil en France</h3>
+                    <p class="text-gray-600">Assistance pour vos premières démarches sur le sol français : ouverture de compte bancaire, titre de séjour, et installation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-marine relative overflow-hidden">
+        <div class="absolute inset-0 bg-nsBlue/10 transform rotate-3"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-3xl font-bold text-white mb-6">Prêt à lancer votre projet d'études ?</h2>
+            <p class="text-gray-300 mb-8 text-lg">Ne laissez rien au hasard. Contactez-nous dès aujourd'hui pour une première évaluation de votre dossier.</p>
+            <a href="{% url 'nextstep:contact' %}" class="inline-flex items-center gap-2 bg-gold text-marine px-8 py-4 font-bold text-lg hover:bg-yellow-500 transition-colors">
+                Démarrer mon dossier
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        marine: '#071D59',
+                        blue: '#1767D3',
+                        gold: '#F2B21B',
+                        light: '#F5F7FA',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+

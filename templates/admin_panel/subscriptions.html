@@ -1,0 +1,174 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block dashboard_title %}Abonnements{% endblock %}
+{% block page_header %}Abonnements{% endblock %}
+
+{% block dashboard_content %}
+<!-- Filter Bar -->
+<div class="bg-white rounded-2xl border border-gray-100 p-5 mb-6">
+    <form method="get" action="{% url 'admin_panel:subscriptions' %}" class="flex flex-col sm:flex-row gap-3">
+        <div class="flex-1">
+            <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Plan</label>
+            <select name="plan" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                <option value="">Tous les plans</option>
+                {% for plan in plans %}
+                <option value="{{ plan.pk }}" {% if plan_filter == plan.pk|stringformat:"d" or plan_filter == plan.slug %}selected{% endif %}>{{ plan.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex-1">
+            <label class="block text-xs font-medium text-gray-500 mb-1 font-inter">Statut</label>
+            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary">
+                <option value="">Tous les statuts</option>
+                {% for value, label in sub_status_choices %}
+                <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex items-end">
+            <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">Filtrer</button>
+        </div>
+    </form>
+</div>
+
+<!-- Desktop Table -->
+<div class="bg-white rounded-2xl border border-gray-100 hidden md:block">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h2 class="font-satoshi font-semibold text-secondary">Liste des abonnements</h2>
+    </div>
+    {% if subscriptions %}
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm font-inter">
+            <thead>
+                <tr class="border-b border-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th class="px-5 py-3">Étudiant</th>
+                    <th class="px-5 py-3">Plan</th>
+                    <th class="px-5 py-3">Statut</th>
+                    <th class="px-5 py-3">Methode</th>
+                    <th class="px-5 py-3">Telephone</th>
+                    <th class="px-5 py-3">Reference</th>
+                    <th class="px-5 py-3">Date paiement</th>
+                    <th class="px-5 py-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for sub in subscriptions %}
+                <tr class="hover:bg-gray-50/50">
+                    <td class="px-5 py-3">
+                        <a href="{% url 'admin_panel:student_detail' sub.user.pk %}" class="text-secondary hover:underline">
+                            <p class="font-medium">{% if sub.user.first_name %}{{ sub.user.first_name }} {{ sub.user.last_name }}{% else %}{{ sub.user.email }}{% endif %}</p>
+                            <p class="text-xs text-gray-500">{{ sub.user.email }}</p>
+                        </a>
+                    </td>
+                    <td class="px-5 py-3">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">{{ sub.plan.name }}</span>
+                    </td>
+                    <td class="px-5 py-3">
+                        {% if sub.status == 'active' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>
+                        {% elif sub.status == 'pending' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En attente</span>
+                        {% elif sub.status == 'expired' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Expire</span>
+                        {% elif sub.status == 'cancelled' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Annule</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3 text-gray-600">{{ sub.get_payment_method_display|default:"—" }}</td>
+                    <td class="px-5 py-3 text-gray-600">{{ sub.phone_number|default:"—" }}</td>
+                    <td class="px-5 py-3 text-gray-600">{{ sub.payment_reference|default:"—" }}</td>
+                    <td class="px-5 py-3 text-gray-600">{% if sub.paid_at %}{{ sub.paid_at|date:"d/m/Y" }}{% else %}—{% endif %}</td>
+                    <td class="px-5 py-3">
+                        <div class="flex items-center space-x-2">
+                            {% if sub.status != 'active' %}
+                            <form method="post" action="{% url 'admin_panel:subscription_update' sub.pk %}" class="inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="active">
+                                <button type="submit" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200">Activer</button>
+                            </form>
+                            {% endif %}
+                            {% if sub.status == 'active' %}
+                            <form method="post" action="{% url 'admin_panel:subscription_update' sub.pk %}" class="inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="expired">
+                                <button type="submit" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-700 hover:bg-amber-200">Expirer</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="px-5 py-12 text-center">
+        <svg class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        <p class="text-sm text-gray-400 font-inter">Aucun abonnement trouve</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Mobile Card List -->
+<div class="md:hidden space-y-3">
+    {% for sub in subscriptions %}
+    <div class="bg-white rounded-2xl border border-gray-100 p-4">
+        <div class="flex items-center justify-between mb-3">
+            <a href="{% url 'admin_panel:student_detail' sub.user.pk %}" class="text-sm font-medium text-secondary hover:underline truncate">{{ sub.user.email }}</a>
+            {% if sub.status == 'active' %}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>
+            {% elif sub.status == 'pending' %}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En attente</span>
+            {% elif sub.status == 'expired' %}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Expire</span>
+            {% elif sub.status == 'cancelled' %}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Annule</span>
+            {% endif %}
+        </div>
+        <div class="space-y-1.5 text-xs text-gray-500 font-inter mb-3">
+            <div class="flex justify-between">
+                <span>Plan</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">{{ sub.plan.name }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Methode</span>
+                <span class="text-gray-700">{{ sub.get_payment_method_display|default:"—" }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Telephone</span>
+                <span class="text-gray-700">{{ sub.phone_number|default:"—" }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Reference</span>
+                <span class="text-gray-700">{{ sub.payment_reference|default:"—" }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Date paiement</span>
+                <span class="text-gray-700">{% if sub.paid_at %}{{ sub.paid_at|date:"d/m/Y" }}{% else %}—{% endif %}</span>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            {% if sub.status != 'active' %}
+            <form method="post" action="{% url 'admin_panel:subscription_update' sub.pk %}" class="inline">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="active">
+                <button type="submit" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200">Activer</button>
+            </form>
+            {% endif %}
+            {% if sub.status == 'active' %}
+            <form method="post" action="{% url 'admin_panel:subscription_update' sub.pk %}" class="inline">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="expired">
+                <button type="submit" class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-700 hover:bg-amber-200">Expirer</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="bg-white rounded-2xl border border-gray-100 px-5 py-12 text-center">
+        <svg class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        <p class="text-sm text-gray-400 font-inter">Aucun abonnement trouve</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

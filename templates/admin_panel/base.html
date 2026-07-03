@@ -1,0 +1,246 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Staff — {% block dashboard_title %}Tableau de bord{% endblock %}{% endblock %}
+
+{% block navbar %}
+<header class="fixed top-0 left-0 right-0 lg:left-72 z-50 bg-white border-b border-gray-200">
+    <div class="flex items-center justify-between px-4 h-14">
+        <div class="lg:hidden">
+            <a href="{% url 'admin_panel:overview' %}" class="font-satoshi font-bold text-xl text-secondary tracking-tight">
+                Visa<span class="text-accent">nextstep</span>
+                <span class="text-xs font-inter font-medium text-gray-400 ml-1">Staff</span>
+            </a>
+        </div>
+        <div class="hidden lg:block">
+            <h1 class="font-satoshi font-semibold text-lg text-secondary">{% block page_header %}Tableau de bord{% endblock %}</h1>
+        </div>
+        <div class="flex items-center space-x-3">
+            {% if pending_docs_count %}
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                {{ pending_docs_count }} doc{{ pending_docs_count|pluralize:"s" }}
+            </span>
+            {% endif %}
+            <a href="{% url 'admin_panel:notifications' %}" class="relative inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:text-secondary hover:border-secondary/30 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                {% if unread_notifications_count %}
+                <span class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[1rem] h-4 px-1 rounded-full bg-accent text-white text-[10px] font-bold">{{ unread_notifications_count }}</span>
+                {% endif %}
+            </a>
+            <!-- Desktop: static profile info -->
+            <div class="hidden lg:flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">{% if user.first_name %}{{ user.first_name|first|upper }}{% else %}{{ user.email|first|upper }}{% endif %}</span>
+                </div>
+                <span class="text-sm text-gray-600 font-medium">{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.email }}{% endif %}</span>
+            </div>
+            <!-- Mobile: profile button with dropdown -->
+            <div class="lg:hidden relative" id="mobileMenuWrapper">
+                <button onclick="document.getElementById('mobileProfileMenu').classList.toggle('hidden')" class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">{% if user.first_name %}{{ user.first_name|first|upper }}{% else %}{{ user.email|first|upper }}{% endif %}</span>
+                </button>
+                {% with request.resolver_match.url_name as current_page %}
+                <div id="mobileProfileMenu" class="hidden absolute top-full mt-2 right-0 w-56 bg-secondary rounded-xl shadow-2xl border border-white/10 py-2 z-[60]">
+                    <a href="{% url 'admin_panel:meetings' %}" class="flex items-center space-x-3 px-4 py-2.5 text-sm {% if current_page == 'meetings' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span>Rendez-vous</span>
+                    </a>
+                    <a href="{% url 'admin_panel:subscriptions' %}" class="flex items-center space-x-3 px-4 py-2.5 text-sm {% if current_page == 'subscriptions' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        <span>Abonnements</span>
+                    </a>
+                    <a href="{% url 'admin_panel:plans' %}" class="flex items-center space-x-3 px-4 py-2.5 text-sm {% if current_page == 'plans' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Plans</span>
+                    </a>
+                    <a href="{% url 'admin_panel:notifications' %}" class="flex items-center justify-between space-x-3 px-4 py-2.5 text-sm {% if current_page == 'notifications' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                        <span class="flex items-center space-x-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <span>Notifications</span>
+                        </span>
+                        {% if unread_notifications_count %}<span class="inline-flex items-center justify-center min-w-[1rem] h-4 px-1 rounded-full bg-accent text-white text-[10px] font-bold">{{ unread_notifications_count }}</span>{% endif %}
+                    </a>
+                    <a href="{% url 'admin_panel:settings' %}" class="flex items-center space-x-3 px-4 py-2.5 text-sm {% if current_page == 'settings' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Paramètres</span>
+                    </a>
+                    <div class="border-t border-white/10 mt-1 pt-1">
+                        <a href="/" class="flex items-center space-x-3 px-4 py-2.5 text-sm text-blue-200 hover:bg-white/10 hover:text-white">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            <span>Site public</span>
+                        </a>
+                        <a href="{% url 'admin_panel:logout' %}" class="flex items-center space-x-3 px-4 py-2.5 text-sm text-blue-200 hover:bg-white/10 hover:text-white">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            <span>Déconnexion</span>
+                        </a>
+                    </div>
+                </div>
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Desktop sidebar -->
+    <aside class="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 bg-secondary z-40">
+        <div class="h-14 flex items-center px-6 border-b border-white/10">
+            <a href="{% url 'admin_panel:overview' %}" class="font-satoshi font-bold text-2xl text-white tracking-tight">
+                Visa<span class="text-accent">nextstep</span>
+            </a>
+            <span class="text-xs font-inter font-medium text-blue-300 ml-2">Staff</span>
+        </div>
+
+        <div class="px-4 py-4">
+            <div class="bg-white/10 rounded-xl px-4 py-3 flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                    <span class="text-white font-bold text-sm">{% if user.first_name %}{{ user.first_name|first|upper }}{% else %}{{ user.email|first|upper }}{% endif %}</span>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold text-white truncate">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.email }}{% endif %}</p>
+                    <span class="text-xs text-blue-300">Conseiller</span>
+                </div>
+            </div>
+        </div>
+
+        {% with request.resolver_match.url_name as current_page %}
+        <nav class="flex-1 overflow-y-auto sidebar-scroll px-3 space-y-1">
+            <a href="{% url 'admin_panel:overview' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'overview' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span>Tableau de bord</span>
+            </a>
+
+            <p class="px-3 pt-4 pb-1 text-[10px] font-bold text-blue-400 uppercase tracking-wider">Gestion</p>
+
+            <a href="{% url 'admin_panel:students' %}" class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'students' or current_page == 'student_detail' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <span class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>Étudiants</span>
+                </span>
+            </a>
+            <a href="{% url 'admin_panel:documents' %}" class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'documents' or current_page == 'document_review' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <span class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Documents</span>
+                </span>
+                {% if pending_docs_count %}<span class="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ pending_docs_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'admin_panel:messages' %}" class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'messages' or current_page == 'chat_detail' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <span class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    <span>Messages</span>
+                </span>
+                {% if unread_messages_count %}<span class="bg-accent text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ unread_messages_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'admin_panel:meetings' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'meetings' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span>Rendez-vous</span>
+            </a>
+            <a href="{% url 'admin_panel:subscriptions' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'subscriptions' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span>Abonnements</span>
+            </a>
+
+            <p class="px-3 pt-4 pb-1 text-[10px] font-bold text-blue-400 uppercase tracking-wider">Configuration</p>
+
+            <a href="{% url 'admin_panel:document_types' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'document_types' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                <span>Types de documents</span>
+            </a>
+            <a href="{% url 'admin_panel:plans' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'plans' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Plans</span>
+            </a>
+            <a href="{% url 'admin_panel:notifications' %}" class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'notifications' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <span class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    <span>Notifications</span>
+                </span>
+                {% if unread_notifications_count %}<span class="inline-flex items-center justify-center min-w-[1rem] h-4 px-1 rounded-full bg-accent text-white text-[10px] font-bold">{{ unread_notifications_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'admin_panel:settings' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if current_page == 'settings' %}bg-white/20 text-white{% else %}text-blue-200 hover:bg-white/10 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Parametres</span>
+            </a>
+        </nav>
+        {% endwith %}
+
+        <div class="p-4 border-t border-white/10 space-y-1">
+            <a href="/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-blue-300 hover:bg-white/10 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                <span>Site public</span>
+            </a>
+            <a href="{% url 'admin_panel:logout' %}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-blue-300 hover:bg-white/10 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <span>Deconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main content area -->
+    <div class="lg:pl-72 {% block content_wrapper_class %}pt-14 pb-20 lg:pb-8{% endblock %}">
+        {% block dashboard_wrapper %}
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+            {% block dashboard_content %}{% endblock %}
+        </div>
+        {% endblock %}
+    </div>
+
+    <!-- Mobile bottom navbar -->
+    {% block mobile_navbar %}
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-secondary z-50 safe-area-bottom">
+        {% with request.resolver_match.url_name as current_page %}
+        <div class="flex items-center justify-around h-16 px-2">
+            <a href="{% url 'admin_panel:overview' %}" class="flex flex-col items-center justify-center space-y-0.5 min-w-0 px-2 {% if current_page == 'overview' %}text-white{% else %}text-blue-300{% endif %}">
+                <svg class="w-6 h-6" fill="{% if current_page == 'overview' %}currentColor{% else %}none{% endif %}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="text-[10px] font-semibold">Accueil</span>
+            </a>
+            <a href="{% url 'admin_panel:students' %}" class="relative flex flex-col items-center justify-center space-y-0.5 min-w-0 px-2 {% if current_page == 'students' %}text-white{% else %}text-blue-300{% endif %}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="text-[10px] font-semibold">Étudiants</span>
+            </a>
+            <a href="{% url 'admin_panel:documents' %}" class="relative flex flex-col items-center justify-center space-y-0.5 min-w-0 px-2 {% if current_page == 'documents' %}text-white{% else %}text-blue-300{% endif %}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="text-[10px] font-semibold">Docs</span>
+                {% if pending_docs_count %}<span class="absolute -top-0.5 right-0.5 bg-amber-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{{ pending_docs_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'admin_panel:messages' %}" class="relative flex flex-col items-center justify-center space-y-0.5 min-w-0 px-2 {% if current_page == 'messages' %}text-white{% else %}text-blue-300{% endif %}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="text-[10px] font-semibold">Messages</span>
+                {% if unread_messages_count %}<span class="absolute -top-0.5 right-0.5 bg-accent text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{{ unread_messages_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'admin_panel:meetings' %}" class="flex flex-col items-center justify-center space-y-0.5 min-w-0 px-2 {% if current_page == 'meetings' %}text-white{% else %}text-blue-300{% endif %}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="text-[10px] font-semibold">RDV</span>
+            </a>
+        </div>
+        {% endwith %}
+    </nav>
+    {% endblock mobile_navbar %}
+</div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+    .sidebar-scroll { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+    .sidebar-scroll:hover { scrollbar-color: rgba(255,255,255,0.3) transparent; }
+    .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: 4px; }
+    .sidebar-scroll:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); }
+</style>
+<script>
+document.addEventListener('click', function(e) {
+    var wrapper = document.getElementById('mobileMenuWrapper');
+    var menu = document.getElementById('mobileProfileMenu');
+    if (wrapper && menu && !wrapper.contains(e.target)) {
+        menu.classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}
+

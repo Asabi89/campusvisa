@@ -1,0 +1,200 @@
+{% extends 'dashboard/base.html' %}
+
+{% block dashboard_title %}Apercu{% endblock %}
+{% block page_header %}Apercu{% endblock %}
+
+{% block dashboard_content %}
+<div class="space-y-6">
+
+    <!-- Welcome header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+            <h2 class="font-satoshi font-bold text-2xl text-secondary">
+                Bonjour, {{ user.first_name|default:user.email }} 👋
+            </h2>
+            <p class="text-gray-500 text-sm mt-1">
+                {% if plan_slug == 'none' %}
+                    Vous n'avez pas encore de plan. Choisissez-en un pour commencer.
+                {% elif plan_status == 'active' %}
+                    Votre plan {{ plan_name }} est actif. Continuez votre progression !
+                {% elif plan_status == 'pending' %}
+                    Votre plan {{ plan_name }} est en attente de confirmation.
+                {% elif plan_status == 'expired' %}
+                    Votre plan {{ plan_name }} a expire.
+                {% elif plan_status == 'cancelled' %}
+                    Votre plan {{ plan_name }} a ete annule.
+                {% else %}
+                    Bienvenue sur votre espace étudiant Visanextstep.
+                {% endif %}
+            </p>
+        </div>
+        <span class="inline-flex items-center self-start px-3 py-1 rounded-full text-xs font-semibold {% if plan_slug == 'premium' %}bg-accent/10 text-accent{% elif plan_slug == 'standard' %}bg-secondary/10 text-secondary{% else %}bg-gray-100 text-gray-600{% endif %}">
+            {{ plan_name }}
+        </span>
+    </div>
+
+    <!-- Payment pending alert -->
+    {% if plan_status == 'pending' %}
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start space-x-3">
+        <div class="shrink-0 mt-0.5">
+            <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-amber-800">Paiement en attente</p>
+            <p class="text-sm text-amber-700 mt-0.5">Votre paiement pour le plan {{ plan_name }} est en cours de verification. Vous recevrez une confirmation sous peu.</p>
+            <a href="{% url 'plans:confirmation' plan_slug %}" class="inline-flex items-center text-sm font-semibold text-amber-800 hover:text-amber-900 mt-2 transition-colors">
+                Voir le statut
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Needs assistance banner -->
+    {% if needs_assistance %}
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex items-start space-x-3">
+            <div class="shrink-0 mt-0.5">
+                <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 11-12.728 0M12 9v4m0 4h.01"/></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-amber-800">Besoin d'aide ?</p>
+                <p class="text-sm text-amber-700 mt-0.5">Un conseiller peut vous aider personnellement avec votre dossier.</p>
+            </div>
+        </div>
+        <a href="https://wa.me/22990000000?text=Bonjour, j'ai besoin d'aide pour mon dossier Visanextstep" target="_blank" rel="noopener" class="inline-flex items-center justify-center shrink-0 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors space-x-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12.05 21.785h-.01a9.86 9.86 0 01-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374A9.86 9.86 0 012.15 12.01C2.15 6.558 6.558 2.15 12.05 2.15c2.634 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.412 9.858-9.88 9.858v-.115zM12.05.075C5.463.075.075 5.463.075 12.01c0 2.104.549 4.162 1.595 5.979L.05 24l6.155-1.614A11.92 11.92 0 0012.05 24c6.547 0 11.935-5.388 11.935-11.99S18.597.075 12.05.075z"/></svg>
+            <span>Contacter sur WhatsApp</span>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Progress card -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-satoshi font-semibold text-lg text-secondary">Votre progression</h3>
+            <span class="text-sm text-gray-500">{{ completed_steps }}/{{ total_steps }} étapes</span>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="w-full bg-gray-100 rounded-full h-3 mb-5">
+            <div class="h-3 rounded-full transition-all duration-500 {% if progress_pct == 100 %}bg-green-500{% else %}bg-accent{% endif %}" style="width: {{ progress_pct }}%"></div>
+        </div>
+
+        <!-- Steps list -->
+        <ul class="space-y-3">
+            {% for step in steps %}
+            <li class="flex items-center space-x-3">
+                {% if step.done %}
+                <div class="shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span class="text-sm text-gray-700">{{ step.label }}</span>
+                {% else %}
+                <div class="shrink-0 w-6 h-6 rounded-full border-2 border-gray-200 bg-white"></div>
+                <span class="text-sm text-gray-400">{{ step.label }}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Quick actions grid -->
+    <div>
+        <h3 class="font-satoshi font-semibold text-lg text-secondary mb-3">Actions rapides</h3>
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+
+            <!-- Mes documents -->
+            <a href="{% url 'dashboard:documents' %}" class="bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-md transition-shadow group">
+                <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+                <h4 class="font-semibold text-sm text-secondary group-hover:text-accent transition-colors">Mes documents</h4>
+                <p class="text-xs text-gray-500 mt-0.5">Deposez et suivez vos fichiers</p>
+            </a>
+
+            <!-- Messages -->
+            <a href="{% url 'dashboard:messages' %}" class="relative bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-md transition-shadow group">
+                {% if not can_chat %}
+                <span class="absolute top-3 right-3 inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-full bg-secondary/10 text-[10px] font-semibold text-secondary">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <span>Standard+</span>
+                </span>
+                {% endif %}
+                <div class="w-10 h-10 rounded-xl {% if can_chat %}bg-secondary/10{% else %}bg-gray-100{% endif %} flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5 {% if can_chat %}text-secondary{% else %}text-gray-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                </div>
+                <h4 class="font-semibold text-sm {% if can_chat %}text-secondary group-hover:text-accent{% else %}text-gray-400{% endif %} transition-colors">Messages</h4>
+                <p class="text-xs text-gray-{% if can_chat %}500{% else %}400{% endif %} mt-0.5">Echangez avec l'equipe</p>
+            </a>
+
+            <!-- Rendez-vous -->
+            <a href="{% url 'dashboard:meetings' %}" class="relative bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-md transition-shadow group">
+                {% if not can_meet %}
+                <span class="absolute top-3 right-3 inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-full bg-secondary/10 text-[10px] font-semibold text-secondary">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <span>Standard+</span>
+                </span>
+                {% endif %}
+                <div class="w-10 h-10 rounded-xl {% if can_meet %}bg-secondary/10{% else %}bg-gray-100{% endif %} flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5 {% if can_meet %}text-secondary{% else %}text-gray-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <h4 class="font-semibold text-sm {% if can_meet %}text-secondary group-hover:text-accent{% else %}text-gray-400{% endif %} transition-colors">Rendez-vous</h4>
+                <p class="text-xs text-gray-{% if can_meet %}500{% else %}400{% endif %} mt-0.5">Planifiez un appel</p>
+            </a>
+
+            <!-- Mon plan -->
+            <a href="{% url 'dashboard:plan' %}" class="bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-md transition-shadow group">
+                <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                </div>
+                <h4 class="font-semibold text-sm text-secondary group-hover:text-accent transition-colors">Mon plan</h4>
+                <p class="text-xs text-gray-500 mt-0.5">Gerez votre abonnement</p>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Dedicated advisor card -->
+    {% if has_dedicated_advisor %}
+    <div class="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-start space-x-4">
+            <div class="shrink-0 w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <h3 class="font-satoshi font-semibold text-secondary">Vous avez un conseiller dedie</h3>
+                <p class="text-sm text-gray-500 mt-1">Votre conseiller personnel vous accompagne tout au long de votre dossier. Contactez-le directement via la messagerie ou lors de vos rendez-vous.</p>
+                <a href="{% url 'dashboard:messages' %}" class="inline-flex items-center text-sm font-semibold text-accent hover:text-red-700 mt-3 transition-colors">
+                    Envoyer un message
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent notifications -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-5">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="font-satoshi font-semibold text-secondary">Notifications recentes</h3>
+            <a href="{% url 'notifications:list' %}" class="text-xs font-semibold text-secondary hover:text-accent">Voir tout</a>
+        </div>
+        {% if recent_notifs %}
+        <div class="space-y-2.5">
+            {% for notif in recent_notifs %}
+            <div class="rounded-xl border border-gray-100 px-3 py-2 {% if not notif.is_read %}bg-blue-50/40{% else %}bg-gray-50/70{% endif %}">
+                <p class="text-sm font-semibold text-gray-900">{{ notif.title }}</p>
+                <p class="text-xs text-gray-600 mt-0.5">{{ notif.message|truncatechars:100 }}</p>
+                <p class="text-[11px] text-gray-400 mt-1">{{ notif.created_at|date:"d/m/Y H:i" }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-gray-400">Aucune notification pour le moment.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
+

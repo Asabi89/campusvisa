@@ -1,0 +1,54 @@
+# Core
+Django==4.2.*
+djangorestframework
+gunicorn
+
+# Channels / WebSockets
+channels[daphne]
+channels-redis
+
+# Authentication
+django-allauth
+
+# Forms
+django-crispy-forms
+crispy-tailwind
+babel
+
+# Media
+Pillow
+
+# Payments
+stripe
+
+# SMS / Communications
+twilio
+
+# Google Calendar / Meet
+google-api-python-client
+google-auth
+firebase-admin
+
+# Storage
+django-storages
+boto3
+
+# Database
+psycopg2-binary
+
+# Environment
+python-dotenv
+
+# Static files
+whitenoise
+
+# CORS
+django-cors-headers
+
+# Task queue
+celery
+redis
+
+celery>=5.3.6
+redis>=5.0.1
+channels_redis>=4.2.0

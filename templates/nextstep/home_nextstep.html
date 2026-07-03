@@ -1,0 +1,364 @@
+{% extends 'base_nextstep.html' %}
+{% load static %}
+{% block extra_head %}
+<style>
+    /* Apply 11px border radius */
+    a.bg-gold, a.bg-marine, button.bg-marine,
+    img.object-cover, .absolute.inset-0.transform,
+    .bg-white.p-8, .bg-marine.p-8, .bg-light.p-8,
+    .w-12.h-12, .w-16.h-16, .w-10.h-10,
+    input, select, textarea {
+        border-radius: 11px !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+    <section class="relative bg-light overflow-hidden border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 z-10">
+                <h1 class="text-4xl md:text-5xl font-bold text-marine leading-tight mb-6">
+                    Votre partenaire de confiance pour concrétiser vos projets
+                </h1>
+                <p class="text-lg text-gray-600 mb-8 max-w-lg">
+                    Next Step Consulting vous accompagne dans vos démarches professionnelles, digitales et académiques avec une expertise reconnue.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#expertise" class="bg-marine text-white px-6 py-3 font-medium text-center hover:bg-nsBlue transition-colors flex justify-center items-center gap-2">
+                        Découvrir nos services
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </a>
+                    <a href="{% url 'pages:home' %}" class="bg-gold text-marine px-6 py-3 font-medium text-center hover:bg-yellow-500 transition-colors flex justify-center items-center gap-2">
+                        Étudier en France
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center relative">
+                <img src="{% static 'assets/hero_illustration.png' %}" alt="Consulting Team Illustration" class="relative z-10 w-full max-w-lg h-auto mix-blend-multiply">
+            </div>
+        </div>
+    </section>
+
+    <!-- Qui sommes-nous -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-marine mb-6">Qui sommes-nous ?</h2>
+                <div class="w-16 h-1 bg-gold mx-auto mb-6"></div>
+                <p class="text-gray-600 text-lg leading-relaxed">
+                    Next Step Consulting est un cabinet de conseil proposant des solutions professionnelles sur-mesure. Notre mission est d'orienter, d'accompagner et de propulser nos clients vers le succès, qu'il s'agisse de développement d'entreprise, d'optimisation de processus ou de mobilité internationale.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expertises -->
+    <section id="expertise" class="py-20 bg-light border-y border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-marine mb-4">Nos domaines d'expertise</h2>
+                <div class="w-16 h-1 bg-gold mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% if services %}
+                    {% for service in services %}
+                    <div class="bg-white p-8 border border-gray-100 hover:shadow-xl transition-shadow group {% if forloop.last and services.count|divisibleby:2 %}md:col-span-2 lg:col-span-1{% endif %}">
+                        <div class="w-16 h-16 mb-6">
+                            {% if service.icon_name %}
+                            <img src="{% static 'assets/'|add:service.icon_name %}" alt="{{ service.title }}" class="w-full h-full object-contain mix-blend-multiply">
+                            {% else %}
+                            <img src="{% static 'assets/icon_target.png' %}" alt="{{ service.title }}" class="w-full h-full object-contain mix-blend-multiply">
+                            {% endif %}
+                        </div>
+                        <h3 class="text-xl font-bold text-marine mb-3">{{ service.title }}</h3>
+                        <p class="text-gray-600">{{ service.description }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="bg-white p-8 border border-gray-100 hover:shadow-xl transition-shadow group">
+                    <div class="w-16 h-16 mb-6">
+                        <img src="{% static 'assets/icon_briefcase.png' %}" alt="Cabinet Conseil" class="w-full h-full object-contain mix-blend-multiply">
+                    </div>
+                    <h3 class="text-xl font-semibold text-marine mb-3">Cabinet Conseil</h3>
+                    <p class="text-gray-600">Conseil stratégique et accompagnement des particuliers, entreprises et porteurs de projets.</p>
+                </div>
+                <div class="bg-white p-8 border border-gray-100 hover:shadow-xl transition-shadow group">
+                    <div class="w-16 h-16 mb-6">
+                        <img src="{% static 'assets/icon_folder.png' %}" alt="Gestion Administrative" class="w-full h-full object-contain mix-blend-multiply">
+                    </div>
+                    <h3 class="text-xl font-semibold text-marine mb-3">Gestion Administrative et de Paie</h3>
+                    <p class="text-gray-600">Formalités administratives, constitution de dossiers, assistance et accompagnement personnalisé.</p>
+                </div>
+                <div class="bg-white p-8 border border-gray-100 hover:shadow-xl transition-shadow group">
+                    <div class="w-16 h-16 mb-6">
+                        <img src="{% static 'assets/icon_cart.png' %}" alt="E-commerce et Solutions Web" class="w-full h-full object-contain mix-blend-multiply">
+                    </div>
+                    <h3 class="text-xl font-semibold text-marine mb-3">E-commerce et Solutions Web</h3>
+                    <p class="text-gray-600">Création de boutiques en ligne, accompagnement digital et optimisation des ventes de vos produits.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Mise en avant Campus France -->
+    <section class="py-20 bg-marine text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Notre service phare : Campus France</h2>
+                <div class="w-16 h-1 bg-gold mb-6"></div>
+                <p class="text-gray-300 text-lg mb-8 leading-relaxed">
+                    Vous rêvez d'étudier en France ? Nous vous accompagnons de A à Z : choix de l'établissement, procédure Campus France, demande de visa, et préparation au départ. Mettez toutes les chances de votre côté avec notre équipe d'experts.
+                </p>
+                <a href="{% url 'pages:home' %}" class="inline-flex items-center gap-2 bg-gold text-marine px-6 py-3 font-semibold hover:bg-yellow-500 transition-colors">
+                    Découvrir l'accompagnement
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+            </div>
+            <div class="md:w-1/2 flex justify-center relative">
+                <img src="{% static 'assets/campus_france_illustration.png' %}" alt="Campus France Illustration" class="relative z-10 w-full max-w-lg h-auto rounded-[11px] shadow-lg">
+            </div>
+        </div>
+    </section>
+
+    <!-- Pourquoi nous choisir -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-marine mb-4">Pourquoi nous choisir ?</h2>
+                <div class="w-16 h-1 bg-gold mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Expertise -->
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-light">
+                        <img src="{% static 'assets/icon_target.png' %}" alt="Expertise" class="w-12 h-12 object-contain mix-blend-multiply">
+                    </div>
+                    <h3 class="text-xl font-semibold text-marine mb-3">Expertise et Stratégie</h3>
+                    <p class="text-gray-600 text-sm">Des consultants spécialisés pour chaque domaine.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-light">
+                        <img src="{% static 'assets/icon_heart.png' %}" alt="Accompagnement personnalisé" class="w-12 h-12 object-contain mix-blend-multiply">
+                    </div>
+                    <h3 class="text-xl font-bold text-marine mb-3">Accompagnement personnalisé</h3>
+                    <p class="text-gray-600 text-sm">Une stratégie sur-mesure adaptée à vos besoins.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-light">
+                        <img src="{% static 'assets/icon_users.png' %}" alt="Réseau de partenaires" class="w-12 h-12 object-contain mix-blend-multiply">
+                    </div>
+                    <h3 class="text-xl font-bold text-marine mb-3">Réseau de partenaires</h3>
+                    <p class="text-gray-600 text-sm">Bénéficiez de notre réseau pour accélérer vos projets.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-light">
+                        <img src="{% static 'assets/icon_chart.png' %}" alt="Transparence & Suivi" class="w-12 h-12 object-contain mix-blend-multiply">
+                    </div>
+                    <h3 class="text-xl font-bold text-marine mb-3">Transparence & Suivi</h3>
+                    <p class="text-gray-600 text-sm">Des reportings clairs et un suivi constant de l'évolution.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Témoignages -->
+    <section class="py-24 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="text-center mb-16">
+                <h2 class="text-sm font-bold text-gold tracking-widest uppercase mb-4">Témoignages</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-marine">Ce que disent nos clients</h3>
+            </div>
+            
+            <div class="w-full max-w-4xl mx-auto relative overflow-hidden" id="testimonial-slider">
+                <!-- Track -->
+                <div class="flex transition-transform duration-700 ease-in-out w-full" id="testimonial-track">
+                    {% if testimonials %}
+                        {% for testimonial in testimonials %}
+                        <div class="w-full flex-shrink-0 px-4 text-center testimonial-slide flex flex-col justify-center">
+                            <p class="text-xl md:text-3xl text-marine font-medium italic mb-8 leading-relaxed">"{{ testimonial.content }}"</p>
+                            <h4 class="font-bold text-gray-900 text-lg">{{ testimonial.student_name }} <span class="text-gold mx-2">|</span> <span class="font-normal text-gray-500">{{ testimonial.program }}</span></h4>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <!-- Testimonial 1 -->
+                    <div class="w-full flex-shrink-0 px-4 text-center testimonial-slide flex flex-col justify-center">
+                        <p class="text-xl md:text-3xl text-marine font-medium italic mb-8 leading-relaxed">"Grâce à Next Step Consulting, j'ai pu structurer mon entreprise et augmenter mon chiffre d'affaires. Une équipe à l'écoute et très professionnelle."</p>
+                        <h4 class="font-bold text-gray-900 text-lg">Sarah M. <span class="text-gold mx-2">|</span> <span class="font-normal text-gray-500">Entrepreneure</span></h4>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="w-full flex-shrink-0 px-4 text-center testimonial-slide flex flex-col justify-center">
+                        <p class="text-xl md:text-3xl text-marine font-medium italic mb-8 leading-relaxed">"Leur accompagnement pour Campus France à été exceptionnel. Ils m'ont aidé de la création du dossier jusqu'à l'obtention de mon visa sans aucun stress."</p>
+                        <h4 class="font-bold text-gray-900 text-lg">Amadou K. <span class="text-gold mx-2">|</span> <span class="font-normal text-gray-500">Étudiant</span></h4>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Navigation Dots -->
+                <div class="flex justify-center items-center gap-3 mt-12" id="testimonial-indicators">
+                    <!-- Dots generated by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-24 bg-light">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-sm font-bold text-gold tracking-widest uppercase mb-4">Questions Fréquentes</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-marine mb-6">Vous avez des questions ?</h3>
+                <div class="w-16 h-1 bg-gold mx-auto mb-6"></div>
+                <p class="text-gray-600">Retrouvez les réponses aux questions les plus courantes sur nos services.</p>
+            </div>
+            
+            <div class="space-y-4">
+                {% if faqs %}
+                    {% for faq in faqs %}
+                    <div class="bg-white border border-gray-200 rounded-[11px] overflow-hidden mb-4">
+                        <button class="w-full text-left px-6 py-4 font-bold text-marine flex justify-between items-center focus:outline-none faq-toggle-btn">
+                            <span>{{ faq.question }}</span>
+                            <svg class="w-5 h-5 text-gold transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="px-6 pb-4 text-gray-600 hidden">
+                            {{ faq.answer|linebreaksbr }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <!-- FAQ Item 1 -->
+                <div class="bg-white border border-gray-200 rounded-[11px] overflow-hidden">
+                    <button class="w-full text-left px-6 py-4 font-bold text-marine flex justify-between items-center focus:outline-none faq-toggle-btn">
+                        <span>Comment se déroule la procédure Campus France avec vous ?</span>
+                        <svg class="w-5 h-5 text-gold transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="px-6 pb-4 text-gray-600 hidden">
+                        Nous vous accompagnons de A à Z : création de votre dossier, choix des universités, préparation aux entretiens, jusqu'à la demande de visa et votre accueil en France.
+                    </div>
+                </div>
+                <!-- FAQ Item 2 -->
+                <div class="bg-white border border-gray-200 rounded-[11px] overflow-hidden">
+                    <button class="w-full text-left px-6 py-4 font-bold text-marine flex justify-between items-center focus:outline-none faq-toggle-btn">
+                        <span>Quels sont les tarifs de vos services de consulting ?</span>
+                        <svg class="w-5 h-5 text-gold transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="px-6 pb-4 text-gray-600 hidden">
+                        Nos tarifs sont sur-mesure et s'adaptent aux besoins spécifiques de votre entreprise ou de votre projet. Contactez-nous pour obtenir un devis gratuit et personnalisé.
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="text-center mt-10">
+                <a href="{% url 'nextstep:faq' %}" class="inline-flex items-center text-nsBlue font-bold hover:text-marine transition-colors">
+                    Consulter toute la FAQ
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Prendre Rendez-vous -->
+    <section class="py-20 bg-marine relative overflow-hidden">
+        <div class="absolute inset-0 bg-nsBlue opacity-10"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Prêt à donner vie à votre projet ?</h2>
+            <p class="text-gray-300 mb-10 text-lg">Que ce soit pour développer votre entreprise, améliorer votre stratégie digitale ou préparer votre mobilité étudiante, nos experts sont à votre disposition.</p>
+            <a href="{% url 'nextstep:contact' %}" class="inline-block bg-gold text-marine font-bold py-4 px-10 rounded-[11px] hover:bg-yellow-500 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1" style="border-radius: 11px;">
+                Prendre rendez-vous maintenant
+            </a>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // FAQ Accordion Logic
+    const faqBtns = document.querySelectorAll('.faq-toggle-btn');
+    faqBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('svg');
+            
+            // Close others
+            faqBtns.forEach(otherBtn => {
+                if (otherBtn !== btn) {
+                    otherBtn.nextElementSibling.classList.add('hidden');
+                    otherBtn.querySelector('svg').classList.remove('rotate-180');
+                }
+            });
+
+            // Toggle current
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        });
+    });
+
+    // Slider Logic
+    const track = document.getElementById('testimonial-track');
+    if(!track) return;
+    const slides = document.querySelectorAll('.testimonial-slide');
+    const indicatorsContainer = document.getElementById('testimonial-indicators');
+    let currentIndex = 0;
+    let autoSlideInterval;
+
+    // Create indicators
+    slides.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.className = 'w-3 h-3 rounded-full transition-colors ' + (index === 0 ? 'bg-gold' : 'bg-gray-300');
+        dot.setAttribute('aria-label', 'Go to slide ' + (index + 1));
+        dot.addEventListener('click', () => goToSlide(index));
+        indicatorsContainer.appendChild(dot);
+    });
+
+    const indicators = indicatorsContainer.querySelectorAll('button');
+
+    function updateSlider() {
+        track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+        indicators.forEach((dot, index) => {
+            dot.className = 'w-3 h-3 rounded-full transition-colors ' + (index === currentIndex ? 'bg-gold' : 'bg-gray-300');
+        });
+    }
+
+    function goToSlide(index) {
+        currentIndex = index;
+        updateSlider();
+        resetInterval();
+    }
+
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateSlider();
+    }
+
+    function resetInterval() {
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = setInterval(nextSlide, 5000);
+    }
+
+    // Start auto slide
+    resetInterval();
+    
+    // Pause on hover
+    track.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+    track.addEventListener('mouseleave', resetInterval);
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,282 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block dashboard_title %}{% if student.first_name %}{{ student.first_name }} {{ student.last_name }}{% else %}{{ student.email }}{% endif %}{% endblock %}
+{% block page_header %}{% if student.first_name %}{{ student.first_name }} {{ student.last_name }}{% else %}{{ student.email }}{% endif %}{% endblock %}
+
+{% block dashboard_content %}
+<!-- Back link -->
+<a href="{% url 'admin_panel:students' %}" class="inline-flex items-center text-sm text-gray-500 hover:text-secondary mb-4">
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Retour aux étudiants
+</a>
+
+<!-- Header Card -->
+<div class="bg-white rounded-2xl border border-gray-100 p-5 mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center space-x-4">
+            {% if student.avatar %}
+            <img src="{{ student.avatar.url }}" alt="" class="w-16 h-16 rounded-full object-cover shrink-0">
+            {% else %}
+            <div class="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
+                <span class="text-secondary text-xl font-bold">{% if student.first_name %}{{ student.first_name|first|upper }}{% else %}{{ student.email|first|upper }}{% endif %}</span>
+            </div>
+            {% endif %}
+            <div>
+                <h2 class="font-satoshi font-semibold text-lg text-secondary">{% if student.first_name %}{{ student.first_name }} {{ student.last_name }}{% else %}{{ student.email }}{% endif %}</h2>
+                <p class="text-sm text-gray-500">{{ student.email }}</p>
+                {% if student.phone %}<p class="text-sm text-gray-500">{{ student.phone }}</p>{% endif %}
+            </div>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+            {% if subscription and subscription.plan %}
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-secondary/10 text-secondary">{{ subscription.plan.name }}</span>
+            {% else %}
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Aucun plan</span>
+            {% endif %}
+            {% if subscription %}
+                {% if subscription.status == 'active' %}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Actif</span>
+                {% elif subscription.status == 'pending' %}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En attente</span>
+                {% else %}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">{{ subscription.get_status_display }}</span>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Informations personnelles -->
+<div class="bg-white rounded-2xl border border-gray-100 mb-6">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="font-satoshi font-semibold text-secondary">Informations personnelles</h3>
+    </div>
+    <div class="p-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Email</p>
+                <p class="text-sm font-medium text-gray-900">{{ student.email }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Telephone</p>
+                <p class="text-sm font-medium text-gray-900">{% if student.phone %}{{ student.phone }}{% else %}—{% endif %}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Pays</p>
+                <p class="text-sm font-medium text-gray-900">{% if student.country_of_residence %}{{ student.country_of_residence.name }}{% else %}—{% endif %}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Langue</p>
+                <p class="text-sm font-medium text-gray-900">{{ student.get_preferred_language_display }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Inscrit le</p>
+                <p class="text-sm font-medium text-gray-900">{{ student.created_at|date:"d/m/Y" }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Evaluation completee</p>
+                <p class="text-sm font-medium text-gray-900">
+                    {% if student.has_completed_onboarding %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Oui</span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Non</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Evaluation -->
+{% if onboarding %}
+<div class="bg-white rounded-2xl border border-gray-100 mb-6">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="font-satoshi font-semibold text-secondary">Evaluation</h3>
+    </div>
+    <div class="p-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Statut du passeport</p>
+                <p class="text-sm font-medium text-gray-900">{{ onboarding.get_passport_status_display }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Niveau d'études</p>
+                <p class="text-sm font-medium text-gray-900">{{ onboarding.get_education_level_display }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Statut d'admission</p>
+                <p class="text-sm font-medium text-gray-900">{{ onboarding.get_admission_status_display }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Compte Campus France</p>
+                <p class="text-sm font-medium text-gray-900">{% if onboarding.campus_france_account == 'yes' %}Oui{% else %}Non{% endif %}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Accompagnement visa</p>
+                <p class="text-sm font-medium text-gray-900">{{ onboarding.get_visa_support_display }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Situation financiere</p>
+                <p class="text-sm font-medium text-gray-900">{{ onboarding.get_financial_situation_display }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Calendrier</p>
+                <p class="text-sm font-medium text-gray-900">{{ onboarding.get_timeline_display }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Plan recommande</p>
+                <p class="text-sm font-medium text-gray-900">{% if onboarding.recommended_plan %}{{ onboarding.recommended_plan }}{% else %}—{% endif %}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Besoin d'assistance</p>
+                <p class="text-sm font-medium text-gray-900">
+                    {% if onboarding.needs_assistance %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Oui</span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Non</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Documents -->
+<div class="bg-white rounded-2xl border border-gray-100 mb-6">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="font-satoshi font-semibold text-secondary">Documents</h3>
+    </div>
+    {% if documents %}
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="border-b border-gray-100">
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Document</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Televerse le</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Commentaire admin</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Fichier</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for doc in documents %}
+                <tr>
+                    <td class="px-5 py-3 text-sm font-medium text-gray-900">
+                        {% if doc.is_custom %}{{ doc.custom_name }}{% elif doc.document_type %}{{ doc.document_type.name }}{% else %}Document{% endif %}
+                    </td>
+                    <td class="px-5 py-3">
+                        {% if doc.status == 'approved' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Approuve</span>
+                        {% elif doc.status == 'rejected' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Rejeté</span>
+                        {% elif doc.status == 'reupload' %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">A renvoyer</span>
+                        {% else %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En attente</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-5 py-3 text-sm text-gray-500">{{ doc.uploaded_at|date:"d/m/Y" }}</td>
+                    <td class="px-5 py-3 text-sm text-gray-500">{% if doc.admin_comment %}{{ doc.admin_comment }}{% else %}—{% endif %}</td>
+                    <td class="px-5 py-3">
+                        <a href="{{ doc.file.url }}" target="_blank" class="text-sm font-medium text-secondary hover:text-secondary/80">Voir</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="px-5 py-8 text-center">
+        <p class="text-sm text-gray-400">Aucun document televerse</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Rendez-vous -->
+<div class="bg-white rounded-2xl border border-gray-100 mb-6">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="font-satoshi font-semibold text-secondary">Rendez-vous</h3>
+    </div>
+    {% if meetings %}
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="border-b border-gray-100">
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Heure</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Sujet</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Lien Meet</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for meeting in meetings %}
+                <tr>
+                    <td class="px-5 py-3 text-sm text-gray-900">{{ meeting.slot.date|date:"d/m/Y" }}</td>
+                    <td class="px-5 py-3 text-sm text-gray-500">{{ meeting.slot.start_time|time:"H:i" }}</td>
+                    <td class="px-5 py-3 text-sm text-gray-900">{{ meeting.topic }}</td>
+                    <td class="px-5 py-3">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">{{ meeting.get_status_display }}</span>
+                    </td>
+                    <td class="px-5 py-3">
+                        {% if meeting.meeting_link %}
+                        <a href="{{ meeting.meeting_link }}" target="_blank" class="text-sm font-medium text-secondary hover:text-secondary/80">Rejoindre</a>
+                        {% else %}
+                        <span class="text-sm text-gray-400">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="px-5 py-8 text-center">
+        <p class="text-sm text-gray-400">Aucun rendez-vous</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Messages -->
+<div class="bg-white rounded-2xl border border-gray-100 mb-6">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="font-satoshi font-semibold text-secondary">Messages</h3>
+    </div>
+    <div class="p-5">
+        {% if chat_room %}
+        <div class="flex items-center gap-3">
+            <a href="{% url 'admin_panel:chat_detail' chat_room.pk %}" class="bg-secondary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-secondary/90">
+                Ouvrir la conversation
+            </a>
+            {% if chat_room.is_urgent %}
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Urgent</span>
+            {% endif %}
+        </div>
+        {% else %}
+        <p class="text-sm text-gray-400">Aucune conversation</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Dernieres notifications -->
+<div class="bg-white rounded-2xl border border-gray-100 mb-6">
+    <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="font-satoshi font-semibold text-secondary">Dernières notifications</h3>
+    </div>
+    {% if notifications %}
+    <div class="divide-y divide-gray-50">
+        {% for notif in notifications %}
+        <div class="px-5 py-3 flex items-center justify-between">
+            <p class="text-sm text-gray-900">{{ notif.title }}</p>
+            <p class="text-xs text-gray-500 shrink-0 ml-3">{{ notif.created_at|date:"d/m/Y" }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="px-5 py-8 text-center">
+        <p class="text-sm text-gray-400">Aucune notification</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

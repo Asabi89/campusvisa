@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- En-tête FAQ -->
+    <section class="pt-40 pb-20 bg-white border-b border-gray-100">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="font-display text-4xl md:text-5xl font-black text-marine mb-6">Comment pouvons-nous vous aider ?</h1>
+            <p class="text-xl text-gray-500 mb-10">Recherchez parmi nos articles ou parcourez les questions fréquentes.</p>
+            
+            <!-- Search Bar -->
+            <div class="relative max-w-xl mx-auto">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <input type="text" placeholder="Posez votre question (ex: entretien Campus France)..." class="block w-full pl-11 pr-4 py-4 bg-light border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-visaRed focus:border-transparent transition-all shadow-sm">
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Accordions -->
+    <section class="py-20 bg-light">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h3 class="font-bold text-lg text-marine mb-6 uppercase tracking-wider text-sm">Général</h3>
+            <div class="space-y-4 mb-12">
+                <!-- Accordion Item 1 -->
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-visaRed/30 transition-colors">
+                    <button onclick="toggleFaq(1)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold text-marine">Qu'est-ce que Visanexstep ?</span>
+                        <svg id="faq-icon-1" class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="faq-content-1" class="px-6 pb-5 hidden">
+                        <p class="text-gray-500">Visanexstep est une plateforme SaaS qui digitalise l'intégralité de la procédure Campus France et de la demande de visa étudiant. Elle vous offre un coffre-fort numérique, un suivi en temps réel et un accompagnement humain par des experts.</p>
+                    </div>
+                </div>
+                <!-- Accordion Item 2 -->
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-visaRed/30 transition-colors">
+                    <button onclick="toggleFaq(2)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold text-marine">La plateforme garantit-elle l'obtention du visa ?</span>
+                        <svg id="faq-icon-2" class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="faq-content-2" class="px-6 pb-5 hidden">
+                        <p class="text-gray-500">Non, seul le consulat à le pouvoir de décision finale pour l'octroi d'un visa. Cependant, Visanexstep maximise vos chances en s'assurant que votre dossier est parfait, sans erreurs et 100% conforme aux attentes consulaires.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-lg text-marine mb-6 uppercase tracking-wider text-sm">Plateforme & Fonctionnement</h3>
+            <div class="space-y-4">
+                <!-- Accordion Item 3 -->
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-visaRed/30 transition-colors">
+                    <button onclick="toggleFaq(3)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold text-marine">Comment fonctionnent les entretiens blancs en visio ?</span>
+                        <svg id="faq-icon-3" class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="faq-content-3" class="px-6 pb-5 hidden">
+                        <p class="text-gray-500">Si vous êtes abonné à l'offre Premium ou Excellence, vous pouvez réserver un créneau directement depuis votre Dashboard. L'entretien se déroule en visioconférence via la plateforme avec un expert qui simulera les questions de l'agent consulaire ou de Campus France.</p>
+                    </div>
+                </div>
+                <!-- Accordion Item 4 -->
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-visaRed/30 transition-colors">
+                    <button onclick="toggleFaq(4)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold text-marine">Mes documents sont-ils sécurisés ?</span>
+                        <svg id="faq-icon-4" class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="faq-content-4" class="px-6 pb-5 hidden">
+                        <p class="text-gray-500">Absolument. Nous utilisons des protocoles de chiffrement de bout en bout (AES-256). Vos passeports, relevés de notes et documents personnels ne sont accessibles que par vous et votre conseiller dédié.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+
+{% endblock %}

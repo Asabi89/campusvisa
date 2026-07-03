@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Votre plan recommande — Visanextstep{% endblock %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="flex items-center justify-between px-6 py-5 max-w-4xl mx-auto w-full">
+        <a href="{% url 'pages:home' %}" class="font-satoshi font-bold text-xl text-secondary tracking-tight">
+            Visa<span class="text-accent">nextstep</span>
+        </a>
+        <span class="text-sm text-gray-400 font-medium">Resultat de votre évaluation</span>
+    </header>
+
+    <!-- Progress bar (complete) -->
+    <div class="w-full bg-gray-200 h-1">
+        <div class="bg-accent h-1 w-full"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-6 py-12">
+        <!-- Hero section -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-5">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h1 class="font-satoshi font-bold text-3xl sm:text-4xl text-secondary mb-3">Evaluation terminee !</h1>
+            <p class="text-gray-500 text-base sm:text-lg max-w-xl mx-auto">
+                Voici le plan que nous recommandons en fonction de votre profil et de vos besoins.
+            </p>
+        </div>
+
+        <!-- Explanation -->
+        {% if explanation %}
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-10 flex items-start gap-3">
+            <svg class="w-5 h-5 text-secondary mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-secondary text-sm leading-relaxed">{{ explanation }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Needs assistance alert -->
+        {% if response.needs_assistance %}
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-10 flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+            <div>
+                <p class="text-amber-800 text-sm font-semibold mb-1">Votre profil nécessite un accompagnement personnalisé</p>
+                <p class="text-amber-700 text-sm">Nous vous recommandons de parler à un conseiller pour determiner la meilleure solution pour vous.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Plan cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+            {% for plan in plans %}
+            <div class="relative bg-white rounded-2xl border-2 {% if plan.slug == response.recommended_plan %}border-accent shadow-lg shadow-accent/10 ring-1 ring-accent/20{% else %}border-gray-200{% endif %} p-6 flex flex-col transition-all hover:shadow-md">
+                <!-- Recommended badge -->
+                {% if plan.slug == response.recommended_plan %}
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span class="bg-accent text-white text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wide">Recommande</span>
+                </div>
+                {% endif %}
+
+                <!-- Plan header -->
+                <div class="text-center mb-5 {% if plan.slug == response.recommended_plan %}mt-2{% endif %}">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 {% if plan.slug == 'premium' %}bg-accent/10{% elif plan.slug == 'standard' %}bg-secondary/10{% else %}bg-gray-100{% endif %}">
+                        {% if plan.slug == 'premium' %}
+                        <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l3.057-3L12 3.5 15.943 0 19 3l-2 7H7L5 3zM12 12v9m-4-4l4 4 4-4"/>
+                        </svg>
+                        {% elif plan.slug == 'standard' %}
+                        <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        {% else %}
+                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        {% endif %}
+                    </div>
+                    <h3 class="font-satoshi font-bold text-xl text-secondary">{{ plan.name }}</h3>
+                    <div class="mt-2">
+                        <span class="font-satoshi font-bold text-2xl text-secondary">{{ plan.price }} €</span>
+                        <span class="text-gray-400 text-xs block mt-0.5">Paiement unique</span>
+                    </div>
+                </div>
+
+                <!-- Score bar -->
+                <div class="mb-5">
+                    <div class="flex items-center justify-between text-sm mb-1.5">
+                        <span class="text-gray-500">Compatibilite</span>
+                        <span class="font-semibold {% if plan.slug == response.recommended_plan %}text-accent{% else %}text-secondary{% endif %}">{{ plan.score }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2.5">
+                        <div class="h-2.5 rounded-full transition-all duration-1000 ease-out {% if plan.slug == response.recommended_plan %}bg-accent{% elif plan.slug == 'standard' %}bg-secondary{% else %}bg-gray-400{% endif %}" style="width: 0%" data-target-width="{{ plan.score }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Features list -->
+                <ul class="space-y-2.5 mb-6 flex-1">
+                    {% if plan.slug == 'premium' %}
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-accent mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Accompagnement visa complet
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-accent mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Inscription Campus France
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-accent mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Preparation entretien
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-accent mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Chat et reunions illimites
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-accent mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Conseiller dedie
+                    </li>
+                    {% elif plan.slug == 'standard' %}
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-secondary mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Revision des documents
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-secondary mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Suivi Campus France
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-secondary mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Chat avec conseiller
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-secondary mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        3 reunions incluses
+                    </li>
+                    {% else %}
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-gray-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Guide Campus France
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-gray-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Checklist documents
+                    </li>
+                    <li class="flex items-start gap-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-gray-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Support par email
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <!-- CTA button -->
+                <a href="{% url 'plans:checkout' plan.slug %}" class="block w-full text-center py-3 rounded-full font-semibold text-sm transition-all {% if plan.slug == response.recommended_plan %}bg-accent text-white hover:bg-red-700 shadow-lg shadow-accent/25{% else %}bg-gray-100 text-secondary hover:bg-gray-200{% endif %}">
+                    Choisir ce plan
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Talk to advisor (if needs_assistance) -->
+        {% if response.needs_assistance %}
+        <div class="text-center bg-white border-2 border-gray-200 rounded-2xl p-8 mb-10">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-secondary/10 mb-4">
+                <svg class="w-7 h-7 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+            </div>
+            <h3 class="font-satoshi font-bold text-xl text-secondary mb-2">Besoin d'un avis personnalisé ?</h3>
+            <p class="text-gray-500 text-sm mb-5 max-w-md mx-auto">Un de nos conseillers peut vous aider à choisir le plan le plus adapté à votre situation.</p>
+            <a href="{% url 'pages:contact' %}" class="inline-flex items-center bg-secondary text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-secondary/90 transition-all">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                Parler à un conseiller
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Footer actions -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm">
+            <a href="{% url 'onboarding:reset' %}" class="text-gray-400 hover:text-secondary transition-colors inline-flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Refaire l'évaluation
+            </a>
+            <span class="text-gray-300 hidden sm:inline">|</span>
+            <a href="{% url 'pages:home' %}" class="text-gray-400 hover:text-secondary transition-colors">Retour à l'accueil</a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate score bars on load
+    setTimeout(function() {
+        document.querySelectorAll('[data-target-width]').forEach(function(bar) {
+            bar.style.width = bar.dataset.targetWidth;
+        });
+    }, 300);
+});
+</script>
+{% endblock %}
+

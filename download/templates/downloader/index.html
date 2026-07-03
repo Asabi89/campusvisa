@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}SaveAll - Social Video Downloader{% endblock %}
+
+{% block content %}
+<main class="wrap">
+    <section class="hero">
+        <div>
+            <h1>Download social videos with one clean workflow.</h1>
+            <p>
+                SaveAll supports Pinterest, TikTok, Facebook, and YouTube.
+                Preview each item first, then download one video or run bulk download.
+            </p>
+        </div>
+        <aside class="hero-card">
+            <strong>Supported Platforms</strong>
+            <div class="platform-list">
+                <div class="platform">Pinterest</div>
+                <div class="platform">TikTok</div>
+                <div class="platform">Facebook</div>
+                <div class="platform">YouTube</div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="layout">
+        <div>
+            <section class="card">
+                <div class="mode-row">
+                    <button id="modeBulkBtn" class="mode-btn active" type="button">Bulk Download</button>
+                    <button id="modeSingleBtn" class="mode-btn" type="button">Individual Download</button>
+                </div>
+
+                <div id="bulkBlock" class="input-block active">
+                    <label for="bulkInput">Paste any text containing links</label>
+                    <textarea id="bulkInput" placeholder="Example:
+https://www.pinterest.com/pin/123456/
+https://www.facebook.com/reel/abc123
+https://www.tiktok.com/@user/video/789
+https://youtu.be/dQw4w9WgXcQ"></textarea>
+                </div>
+
+                <div id="singleBlock" class="input-block">
+                    <label for="singleInput">Single URL</label>
+                    <input id="singleInput" type="text" placeholder="https://www.pinterest.com/pin/..." />
+                </div>
+
+                <div class="button-row">
+                    <button id="previewBtn" class="btn-ghost" type="button">Preview</button>
+                    <button id="downloadAllBtn" class="btn-main" type="button" disabled>Download All Previewed</button>
+                    <span id="countHint" class="hint">0 URL(s)</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Video Previews</h2>
+                <div id="previewGrid" class="preview-grid"></div>
+            </section>
+
+            <section id="progressCard" class="card progress-card">
+                <div class="progress-head">
+                    <span>Download Progress</span>
+                    <span id="progressText">0 / 0</span>
+                </div>
+                <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+                <div id="jobItems" class="job-items"></div>
+            </section>
+        </div>
+
+        <aside class="sidebar">
+            <section class="ad-mini">
+                <div>
+                    <h4>Ad Slot 1</h4>
+                    <p>Mini card reserved for your display campaign.</p>
+                </div>
+            </section>
+            <section class="ad-mini">
+                <div>
+                    <h4>Ad Slot 2</h4>
+                    <p>Use this card for partner banners or internal promotions.</p>
+                </div>
+            </section>
+            <section class="ad-mini">
+                <div>
+                    <h4>Ad Slot 3</h4>
+                    <p>Compact placement designed for sidebar ad networks.</p>
+                </div>
+            </section>
+        </aside>
+    </section>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const previewUrl = "{% url 'downloader:preview' %}";
+    const startUrl = "{% url 'downloader:start' %}";
+    const statusTemplate = "{% url 'downloader:status' 'JOB_ID_PLACEHOLDER' %}";
+    const fileTemplate = "{% url 'downloader:file' 'FILE_NAME_PLACEHOLDER' %}";
+
+    const PATTERNS = [
+        /https?:\/\/(?:www\.|[a-z]{2}\.)?pinterest\.[a-z]{2,3}\/[^\s"'<>\[\](){}]+/gi,
+        /https?:\/\/pin\.it\/[^\s"'<>\[\](){}]+/gi,
+        /https?:\/\/(?:www\.|vm\.|vt\.)?tiktok\.com\/[^\s"'<>\[\](){}]+/gi,
+        /https?:\/\/(?:[a-zA-Z0-9-]+\.)?facebook\.com\/[^\s"'<>\[\](){}]+/gi,
+        /https?:\/\/fb\.watch\/[^\s"'<>\[\](){}]+/gi,
+        /https?:\/\/(?:www\.|m\.)?youtube\.com\/watch\?[^\s"'<>\[\](){}]+/gi,
+        /https?:\/\/youtu\.be\/[^\s"'<>\[\](){}]+/gi,
+        /https?:\/\/(?:www\.)?youtube\.com\/shorts\/[^\s"'<>\[\](){}]+/gi,
+    ];
+
+    const modeBulkBtn = document.getElementById("modeBulkBtn");
+    const modeSingleBtn = document.getElementById("modeSingleBtn");
+    const bulkBlock = document.getElementById("bulkBlock");
+    const singleBlock = document.getElementById("singleBlock");
+    const bulkInput = document.getElementById("bulkInput");
+    const singleInput = document.getElementById("singleInput");
+    const previewBtn = document.getElementById("previewBtn");
+    const downloadAllBtn = document.getElementById("downloadAllBtn");
+    const countHint = document.getElementById("countHint");
+    const previewGrid = document.getElementById("previewGrid");
+    const progressCard = document.getElementById("progressCard");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+    const jobItems = document.getElementById("jobItems");
+
+    let mode = "bulk";
+    let previewItems = [];
+    let pollTimer = null;
+    let currentJob = null;
+
+    function extractUrls(text) {
+        const seen = new Set();
+        const found = [];
+        for (const pattern of PATTERNS) {
+            pattern.lastIndex = 0;
+            let match;
+            while ((match = pattern.exec(text)) !== null) {
+                const cleaned = match[0].replace(/[.,;:!?)"']+$/, "");
+                if (!seen.has(cleaned)) {
+                    seen.add(cleaned);
+                    found.push(cleaned);
+                }
+            }
+        }
+        return found;
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return "";
+    }
+
+    function statusUrl(jobId) {
+        return statusTemplate.replace("JOB_ID_PLACEHOLDER", encodeURIComponent(jobId));
+    }
+
+    function fileUrl(filename) {
+        return fileTemplate.replace("FILE_NAME_PLACEHOLDER", encodeURIComponent(filename));
+    }
+
+    function setMode(newMode) {
+        mode = newMode;
+        const isBulk = mode === "bulk";
+        modeBulkBtn.classList.toggle("active", isBulk);
+        modeSingleBtn.classList.toggle("active", !isBulk);
+        bulkBlock.classList.toggle("active", isBulk);
+        singleBlock.classList.toggle("active", !isBulk);
+        previewItems = [];
+        previewGrid.innerHTML = "";
+        downloadAllBtn.disabled = true;
+        countHint.textContent = "0 URL(s)";
+    }
+
+    function previewMediaHtml(item) {
+        if (item.preview_video_url) {
+            return `<video src="${item.preview_video_url}" muted controls preload="metadata"></video>`;
+        }
+        if (item.thumbnail) {
+            return `<img src="${item.thumbnail}" alt="Video preview">`;
+        }
+        return "<span>No preview available</span>";
+    }
+
+    function renderPreview(items) {
+        previewGrid.innerHTML = "";
+        items.forEach((item, idx) => {
+            const card = document.createElement("article");
+            card.className = "preview-card";
+            card.innerHTML = `
+                <div class="preview-media">${previewMediaHtml(item)}</div>
+                <div class="preview-body">
+                    <p class="preview-title">${item.title || "Untitled video"}</p>
+                    <div class="meta">
+                        <span class="tag">${item.platform}</span>
+                        <span class="tag">${item.can_download ? "ready" : "blocked"}</span>
+                    </div>
+                    ${item.warning ? `<p class="warning">${item.warning}</p>` : ""}
+                    <div class="card-actions">
+                        <button class="btn-main tiny" data-single="${idx}" ${item.can_download ? "" : "disabled"}>Download This</button>
+                        <a class="btn-ghost tiny" href="${item.url}" target="_blank" rel="noopener">Open Source</a>
+                    </div>
+                </div>
+            `;
+            previewGrid.appendChild(card);
+        });
+    }
+
+    async function callJson(url, payload) {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+        }
+        return data;
+    }
+
+    async function doPreview() {
+        const urls = mode === "bulk"
+            ? extractUrls(bulkInput.value || "")
+            : extractUrls(singleInput.value || "");
+        countHint.textContent = `${urls.length} URL(s)`;
+        if (!urls.length) {
+            alert("No supported social URL found.");
+            return;
+        }
+
+        previewBtn.disabled = true;
+        try {
+            const data = await callJson(previewUrl, { urls });
+            previewItems = data.items || [];
+            renderPreview(previewItems);
+            const downloadable = previewItems.filter((item) => item.can_download).length;
+            downloadAllBtn.disabled = downloadable === 0;
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            previewBtn.disabled = false;
+        }
+    }
+
+    function renderJobItems(items) {
+        jobItems.innerHTML = "";
+        items.forEach((item, idx) => {
+            const row = document.createElement("div");
+            row.className = "job-item";
+            row.id = `job-item-${idx}`;
+            row.innerHTML = `
+                <div>
+                    <div class="tag">${item.platform}</div>
+                    <div class="job-msg">${item.message}</div>
+                </div>
+                <div id="job-action-${idx}"></div>
+            `;
+            jobItems.appendChild(row);
+        });
+    }
+
+    async function startDownload(urls) {
+        const filtered = urls.filter(Boolean).slice(0, 50);
+        if (!filtered.length) {
+            alert("Nothing to download.");
+            return;
+        }
+
+        downloadAllBtn.disabled = true;
+        const data = await callJson(startUrl, { urls: filtered });
+        currentJob = data.job_id;
+        progressCard.style.display = "block";
+        progressFill.style.width = "0%";
+        progressText.textContent = `0 / ${data.total || filtered.length}`;
+        renderJobItems(data.items || []);
+
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(pollStatus, 1400);
+    }
+
+    async function pollStatus() {
+        if (!currentJob) return;
+        const response = await fetch(statusUrl(currentJob));
+        const data = await response.json();
+        if (!response.ok || data.error) {
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = null;
+            return;
+        }
+
+        const done = data.done || 0;
+        const total = data.total || 0;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        progressText.textContent = `${done} / ${total}`;
+        progressFill.style.width = `${pct}%`;
+
+        (data.items || []).forEach((item, idx) => {
+            const row = document.getElementById(`job-item-${idx}`);
+            if (!row) return;
+            const msg = row.querySelector(".job-msg");
+            if (msg) msg.textContent = item.message;
+            const action = document.getElementById(`job-action-${idx}`);
+            if (item.status === "done" && item.filename && action && !action.innerHTML) {
+                action.innerHTML = `<a class="save-link" href="${fileUrl(item.filename)}" download>Save</a>`;
+            }
+        });
+
+        if (data.status === "finished") {
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = null;
+            downloadAllBtn.disabled = false;
+        }
+    }
+
+    modeBulkBtn.addEventListener("click", () => setMode("bulk"));
+    modeSingleBtn.addEventListener("click", () => setMode("single"));
+    previewBtn.addEventListener("click", doPreview);
+    downloadAllBtn.addEventListener("click", () => {
+        const urls = previewItems.filter((item) => item.can_download).map((item) => item.url);
+        startDownload(urls);
+    });
+
+    previewGrid.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-single]");
+        if (!button) return;
+        const index = Number(button.dataset.single);
+        const item = previewItems[index];
+        if (!item || !item.can_download) return;
+        startDownload([item.url]);
+    });
+
+    bulkInput.addEventListener("input", () => {
+        const count = extractUrls(bulkInput.value || "").length;
+        countHint.textContent = `${count} URL(s)`;
+    });
+    singleInput.addEventListener("input", () => {
+        const count = extractUrls(singleInput.value || "").length;
+        countHint.textContent = `${count} URL(s)`;
+    });
+</script>
+{% endblock %}
+

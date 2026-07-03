@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Paiement en attente — Visanextstep{% endblock %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex flex-col">
+    <header class="flex items-center justify-between px-6 py-5 max-w-3xl mx-auto w-full">
+        <a href="{% url 'pages:home' %}" class="font-satoshi font-bold text-xl text-secondary tracking-tight">
+            Visa<span class="text-accent">nextstep</span>
+        </a>
+    </header>
+
+    <div class="w-full bg-gray-200 h-1">
+        <div class="bg-accent h-1 w-full"></div>
+    </div>
+
+    <div class="flex-1 flex items-center justify-center px-6 py-12">
+        <div class="max-w-md w-full text-center">
+            <!-- Animated check -->
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-100 mb-6">
+                <svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+
+            <h1 class="font-satoshi font-bold text-2xl sm:text-3xl text-secondary mb-3">Paiement en attente</h1>
+            <p class="text-gray-500 text-sm mb-8">Votre demande de paiement à ete envoyee. Veuillez confirmer le paiement sur votre telephone.</p>
+
+            <!-- Summary card -->
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 text-left mb-8">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 text-sm">Plan</span>
+                        <span class="font-semibold text-secondary text-sm">{{ plan_name }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 text-sm">Montant</span>
+                        <span class="font-semibold text-secondary text-sm">{{ plan_price }} €</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 text-sm">Moyen de paiement</span>
+                        <span class="font-semibold text-secondary text-sm">{{ method_name }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 text-sm">Telephone</span>
+                        <span class="font-semibold text-secondary text-sm">{{ subscription.phone_number }}</span>
+                    </div>
+                    <hr class="border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 text-sm">Reference</span>
+                        <span class="font-mono font-bold text-secondary text-sm">{{ subscription.payment_reference }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 text-sm">Statut</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">En attente</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 text-left mb-8">
+                <h3 class="font-semibold text-secondary text-sm mb-2">Comment confirmer ?</h3>
+                <ol class="space-y-1.5 text-sm text-secondary/80">
+                    <li class="flex gap-2"><span class="font-bold text-secondary">1.</span> Ouvrez l'application {{ method_name }} sur votre telephone</li>
+                    <li class="flex gap-2"><span class="font-bold text-secondary">2.</span> Confirmez la notification de paiement</li>
+                    <li class="flex gap-2"><span class="font-bold text-secondary">3.</span> Entrez votre code PIN pour valider</li>
+                    <li class="flex gap-2"><span class="font-bold text-secondary">4.</span> Votre compte sera active automatiquement</li>
+                </ol>
+            </div>
+
+            <a href="{% url 'dashboard:overview' %}" class="inline-flex items-center bg-accent text-white px-8 py-3.5 rounded-full font-semibold text-sm hover:bg-red-700 transition-all shadow-lg shadow-accent/25">
+                Aller à mon espace
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

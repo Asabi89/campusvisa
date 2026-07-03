@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: campusvisa_redis
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    container_name: campusvisa_celery
+    command: celery -A config worker -l INFO
+    volumes:
+      - .:/app
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=config.settings.base
+    depends_on:
+      - redis
