@@ -10,7 +10,10 @@ services:
   web:
     build: .
     container_name: campusvisa_web
-    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py migrate &&
+             daphne -b 0.0.0.0 -p 8000 config.asgi:application"
     ports:
       - "8000:8000"
     volumes:
@@ -30,6 +33,6 @@ services:
       - .:/app
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
-      - DJANGO_SETTINGS_MODULE=config.settings.base
+      - DJANGO_SETTINGS_MODULE=config.settings.prod
     depends_on:
       - redis

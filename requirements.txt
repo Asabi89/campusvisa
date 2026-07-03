@@ -52,3 +52,7 @@ redis
 celery>=5.3.6
 redis>=5.0.1
 channels_redis>=4.2.0
+
+# Missing Dependencies for production
+django-phonenumber-field[phonenumbers]
+django-countries
