@@ -49,9 +49,11 @@ class MaintenanceModeMiddleware:
         if request.user.is_authenticated and (
             request.user.is_staff or request.user.is_superuser or request.user.is_advisor
         ):
-            if any(path.startswith(prefix) for prefix in student_space_prefixes):
-                # Force staff/advisors to use the staff portal only.
-                return redirect('/' if is_staff_host else '/management/')
+            is_admin_host = host.startswith('admin.')
+            if not is_staff_host and not is_admin_host:
+                if any(path.startswith(prefix) for prefix in student_space_prefixes):
+                    # Force staff/advisors to use the staff portal only.
+                    return redirect('https://staff.nextstepc.com/')
 
         # Keep static/media/admin/staff tooling reachable while maintenance is active.
         if (
