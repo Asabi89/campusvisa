@@ -46,8 +46,8 @@ def setup_vps():
     # Clone the repository
     # Note: the repository needs to be public, or use a deploy key, or use HTTPS with token.
     # We will assume it's public for now, or just create a placeholder directory and pull.
-    run_cmd(ssh, "rm -rf /root/campusvisa")
-    run_cmd(ssh, "git clone https://github.com/Asabi89/campusvisa.git /root/campusvisa")
+    run_cmd(ssh, "rm -rf /opt/campusvisa")
+    run_cmd(ssh, "git clone https://github.com/Asabi89/campusvisa.git /opt/campusvisa")
 
     # Write .env file
     env_content = """SECRET_KEY=django-insecure-production-key-campusvisa-2026
@@ -71,10 +71,10 @@ EMAIL_HOST_USER=selinaonio@gmail.com
 EMAIL_HOST_PASSWORD=lwxn wiow zaxf ovcx
 DEFAULT_FROM_EMAIL=CampusVisa <no-reply@nextstepc.com>
 """
-    run_cmd(ssh, f"echo '{env_content}' > /root/campusvisa/.env")
+    run_cmd(ssh, f"echo '{env_content}' > /opt/campusvisa/.env")
 
     # Start docker containers
-    run_cmd(ssh, "cd /root/campusvisa && docker compose up -d --build")
+    run_cmd(ssh, "cd /opt/campusvisa && docker compose up -d --build")
 
     # Setup Nginx Configuration
     nginx_conf = """
@@ -92,12 +92,12 @@ server {
 
     # Serve Django static files directly via Nginx for performance
     location /static/ {
-        alias /root/campusvisa/static/;
+        alias /opt/campusvisa/staticfiles/;
     }
 
     # Serve Django media files
     location /media/ {
-        alias /root/campusvisa/media/;
+        alias /opt/campusvisa/media/;
     }
 }
 """
