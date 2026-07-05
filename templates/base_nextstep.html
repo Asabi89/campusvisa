@@ -49,10 +49,10 @@
                 
                 <div class="hidden md:flex items-center space-x-4">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'dashboard:overview' %}" class="text-white hover:text-gold text-sm font-medium">Espace Client</a>
-                        <a href="{% url 'account_logout' %}" class="text-gray-300 hover:text-white text-sm">Déconnexion</a>
+                        <a href="https://visa.nextstepc.com/dashboard/" class="text-white hover:text-gold text-sm font-medium">Espace Client</a>
+                        <a href="https://visa.nextstepc.com/accounts/logout/" class="text-gray-300 hover:text-white text-sm">Déconnexion</a>
                     {% else %}
-                        <a href="{% url 'account_login' %}" class="text-white hover:text-gold text-sm font-medium">Connexion</a>
+                        <a href="https://visa.nextstepc.com/accounts/login/" class="text-white hover:text-gold text-sm font-medium">Connexion</a>
                         <a href="{% if ns_settings and ns_settings.rendez_vous_link %}{{ ns_settings.appointment_url }}{% else %}{% url 'nextstep:contact' %}{% endif %}" class="bg-gold text-marine px-5 py-2 font-semibold hover:bg-yellow-500 transition-colors rounded-[11px]-11px">Prendre RDV</a>
                     {% endif %}
                 </div>
@@ -75,10 +75,10 @@
                 <a href="https://visa.nextstepc.com" class="block px-3 py-2 text-white hover:text-gold font-medium">Campus France</a>
                 <a href="{% url 'nextstep:contact' %}" class="block px-3 py-2 text-white hover:text-gold font-medium">Contact</a>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard:overview' %}" class="block px-3 py-2 text-gold font-medium">Espace Client</a>
-                    <a href="{% url 'account_logout' %}" class="block px-3 py-2 text-gray-400">Déconnexion</a>
+                    <a href="https://visa.nextstepc.com/dashboard/" class="block px-3 py-2 text-gold font-medium">Espace Client</a>
+                    <a href="https://visa.nextstepc.com/accounts/logout/" class="block px-3 py-2 text-gray-400">Déconnexion</a>
                 {% else %}
-                    <a href="{% url 'account_login' %}" class="block px-3 py-2 text-gold font-medium">Connexion</a>
+                    <a href="https://visa.nextstepc.com/accounts/login/" class="block px-3 py-2 text-gold font-medium">Connexion</a>
                     <a href="{% if ns_settings and ns_settings.rendez_vous_link %}{{ ns_settings.appointment_url }}{% else %}{% url 'nextstep:contact' %}{% endif %}" class="block px-3 py-2 text-white bg-gold font-medium text-center mt-2 rounded-[11px]-11px">Prendre RDV</a>
                 {% endif %}
             </div>
