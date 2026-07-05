@@ -2,9 +2,6 @@ from django.shortcuts import render
 from .models import NextStepFAQ, NextStepService, NextStepTestimonial
 
 def home(request):
-    if 'visa.nextstepc.com' in request.get_host():
-        from apps.pages.views import home as visa_home
-        return visa_home(request)
 
     context = {
         'services': NextStepService.objects.filter(is_active=True).order_by('order'),

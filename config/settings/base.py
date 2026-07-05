@@ -67,6 +67,7 @@ SITE_ID = 1
 # ---------- MIDDLEWARE ----------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'config.middleware.SubdomainRoutingMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -212,3 +213,7 @@ else:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+
+
+# Share sessions across all subdomains
+SESSION_COOKIE_DOMAIN = '.nextstepc.com'
