@@ -9,6 +9,8 @@ class SubdomainRoutingMiddleware:
             request.urlconf = 'config.urls_visa'
         elif host.startswith('staff.'):
             request.urlconf = 'config.urls_staff'
+        elif host.startswith('admin.'):
+            request.urlconf = 'config.urls_admin'
         else:
             request.urlconf = 'config.urls'
 
