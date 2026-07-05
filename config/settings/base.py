@@ -217,3 +217,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Share sessions across all subdomains
 SESSION_COOKIE_DOMAIN = '.nextstepc.com'
+CSRF_COOKIE_DOMAIN = '.nextstepc.com'
+
+# Trust all subdomains for CSRF (Django 4.0+)
+CSRF_TRUSTED_ORIGINS = [
+    'https://nextstepc.com',
+    'https://*.nextstepc.com',
+]
