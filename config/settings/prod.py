@@ -47,7 +47,7 @@ CHANNEL_LAYERS = {
 
 # ---------- STATIC FILES ----------
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # ---------- AWS S3 STORAGE ----------
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
