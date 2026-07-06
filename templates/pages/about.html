@@ -5,13 +5,12 @@
 {% block content %}
 <section class="pt-28 pb-16 bg-gray-50">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p class="text-xs sm:text-sm uppercase tracking-wide text-accent font-semibold mb-3">À propos de Visanextstep</p>
+        <p class="text-xs sm:text-sm uppercase tracking-wide text-accent font-semibold mb-3">{{ page_settings.title|default:"À propos de Visanextstep" }}</p>
         <h1 class="font-satoshi font-bold text-3xl sm:text-5xl text-secondary leading-tight">
-            Un accompagnement humain pour reussir votre projet d'études en France
+            {{ page_settings.subtitle|default:"Un accompagnement humain pour reussir votre projet d'études en France" }}
         </h1>
         <p class="mt-5 text-gray-600 text-base sm:text-lg max-w-3xl leading-relaxed">
-            Visanextstep aide les étudiants à avancer avec methode, clarté et confiance: de l'orientation initiale jusqu'au visa.
-            Notre mission est simple: vous faire gagner du temps, éviter les erreurs critiques et vous accompagner à chaque étape.
+            {{ page_settings.content|default:"Visanextstep aide les étudiants à avancer avec methode, clarté et confiance: de l'orientation initiale jusqu'au visa. Notre mission est simple: vous faire gagner du temps, éviter les erreurs critiques et vous accompagner à chaque étape." }}
         </p>
     </div>
 </section>

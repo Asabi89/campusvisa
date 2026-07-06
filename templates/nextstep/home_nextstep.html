@@ -19,10 +19,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 flex flex-col md:flex-row items-center">
             <div class="md:w-1/2 z-10">
                 <h1 class="text-4xl md:text-5xl font-bold text-marine leading-tight mb-6">
-                    Votre partenaire de confiance pour concrétiser vos projets
+                    {{ home_settings.hero_title|default:"Votre partenaire de confiance pour concrétiser vos projets" }}
                 </h1>
                 <p class="text-lg text-gray-600 mb-8 max-w-lg">
-                    Next Step Consulting vous accompagne dans vos démarches professionnelles, digitales et académiques avec une expertise reconnue.
+                    {{ home_settings.hero_subtitle|default:"Next Step Consulting vous accompagne dans vos démarches professionnelles, digitales et académiques avec une expertise reconnue." }}
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <a href="#expertise" class="bg-marine text-white px-6 py-3 font-medium text-center hover:bg-nsBlue transition-colors flex justify-center items-center gap-2">
@@ -45,10 +45,10 @@
     <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-3xl font-bold text-marine mb-6">Qui sommes-nous ?</h2>
+                <h2 class="text-3xl font-bold text-marine mb-6">{{ home_settings.about_title|default:"Qui sommes-nous ?" }}</h2>
                 <div class="w-16 h-1 bg-gold mx-auto mb-6"></div>
                 <p class="text-gray-600 text-lg leading-relaxed">
-                    Next Step Consulting est un cabinet de conseil proposant des solutions professionnelles sur-mesure. Notre mission est d'orienter, d'accompagner et de propulser nos clients vers le succès, qu'il s'agisse de développement d'entreprise, d'optimisation de processus ou de mobilité internationale.
+                    {{ home_settings.about_text|default:"Next Step Consulting est un cabinet de conseil proposant des solutions professionnelles sur-mesure. Notre mission est d'orienter, d'accompagner et de propulser nos clients vers le succès, qu'il s'agisse de développement d'entreprise, d'optimisation de processus ou de mobilité internationale." }}
                 </p>
             </div>
         </div>
@@ -127,7 +127,7 @@
     <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-marine mb-4">Pourquoi nous choisir ?</h2>
+                <h2 class="text-3xl font-bold text-marine mb-4">{{ home_settings.why_us_title|default:"Pourquoi nous choisir ?" }}</h2>
                 <div class="w-16 h-1 bg-gold mx-auto"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

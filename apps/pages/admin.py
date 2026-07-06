@@ -55,3 +55,41 @@ class TestimonialAdmin(admin.ModelAdmin):
     list_editable = ('order', 'is_active')
     search_fields = ('name', 'quote')
 
+
+from .models import (
+    AboutPageSettings,
+    ServicesPageSettings,
+    PricingPageSettings,
+    HowItWorksPageSettings,
+    TestimonialsPageSettings,
+    FAQPageSettings,
+    ContactPageSettings
+)
+
+class SingletonModelAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        if self.model.objects.count() >= 1:
+            return False
+        return super().has_add_permission(request)
+
+@admin.register(AboutPageSettings)
+class AboutPageSettingsAdmin(SingletonModelAdmin): pass
+
+@admin.register(ServicesPageSettings)
+class ServicesPageSettingsAdmin(SingletonModelAdmin): pass
+
+@admin.register(PricingPageSettings)
+class PricingPageSettingsAdmin(SingletonModelAdmin): pass
+
+@admin.register(HowItWorksPageSettings)
+class HowItWorksPageSettingsAdmin(SingletonModelAdmin): pass
+
+@admin.register(TestimonialsPageSettings)
+class TestimonialsPageSettingsAdmin(SingletonModelAdmin): pass
+
+@admin.register(FAQPageSettings)
+class FAQPageSettingsAdmin(SingletonModelAdmin): pass
+
+@admin.register(ContactPageSettings)
+class ContactPageSettingsAdmin(SingletonModelAdmin): pass
+

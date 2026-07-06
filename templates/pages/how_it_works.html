@@ -5,8 +5,8 @@
 {% block content %}
 <section class="pt-28 pb-16 bg-gray-50">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-xs sm:text-sm uppercase tracking-wide text-accent font-semibold mb-3">Comment ça marche</p>
-        <h1 class="font-satoshi font-bold text-3xl sm:text-5xl text-secondary leading-tight">Un parcours simple en 4 étapes</h1>
+        <p class="text-xs sm:text-sm uppercase tracking-wide text-accent font-semibold mb-3">{{ page_settings.title|default:"Comment ça marche" }}</p>
+        <h1 class="font-satoshi font-bold text-3xl sm:text-5xl text-secondary leading-tight">{{ page_settings.subtitle|default:"Un parcours simple en 4 étapes" }}</h1>
         <p class="mt-5 text-gray-600 text-base sm:text-lg max-w-3xl mx-auto">
             Visanextstep vous guide avec une methode claire, des actions prioritaires et un accompagnement adapté à votre profil.
         </p>

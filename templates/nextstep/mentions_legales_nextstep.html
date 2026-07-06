@@ -5,7 +5,7 @@
 <!-- Header Page -->
     <section class="py-20 bg-marine text-white text-center">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-4xl md:text-5xl font-bold mb-6">Mentions Légales</h1>
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">{{ page_settings.title|default:"Mentions Légales" }}</h1>
             <div class="w-16 h-1 bg-gold mx-auto mb-6"></div>
         </div>
     </section>
@@ -13,23 +13,7 @@
     <!-- Mentions Légales Content -->
     <section class="py-20 bg-white">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg prose-blue text-gray-700">
-            <h2 class="text-2xl font-bold text-marine mt-8 mb-4">1. Éditeur du site</h2>
-            <p class="mb-4">Le site Next Step Consulting est édité par la société Next Step Consulting, SAS au capital de 10 000 €, immatriculée au Registre du Commerce et des Sociétés sous le numéro XXX XXX XXX.</p>
-            <p class="mb-4">Siège social : 123 Avenue de l'Expertise, 75001 Paris, France<br>
-            Email : contact@nextstep-consulting.com<br>
-            Téléphone : +33 1 23 45 67 89</p>
-
-            <h2 class="text-2xl font-bold text-marine mt-8 mb-4">2. Directeur de la publication</h2>
-            <p class="mb-4">Le directeur de la publication est Jane Doe, en sa qualité de Présidente.</p>
-
-            <h2 class="text-2xl font-bold text-marine mt-8 mb-4">3. Hébergement</h2>
-            <p class="mb-4">Ce site est hébergé par Hostinger, situé au 61 Lordou Vironos Street, 6023 Larnaca, Chypre.</p>
-
-            <h2 class="text-2xl font-bold text-marine mt-8 mb-4">4. Propriété intellectuelle</h2>
-            <p class="mb-4">L'ensemble de ce site relève de la législation sur le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés. La reproduction de tout ou partie de ce site sur quel que support que ce soit est formellement interdite sauf autorisation expresse du directeur de la publication.</p>
-
-            <h2 class="text-2xl font-bold text-marine mt-8 mb-4">5. Données personnelles</h2>
-            <p class="mb-4">Conformément à la loi "Informatique et Libertés" et au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression des données vous concernant. Vous pouvez exercer ce droit en nous contactant à l'adresse email : contact@nextstep-consulting.com.</p>
+            {{ page_settings.content|safe|default:"Contenu des mentions légales" }}
         </div>
     </section>
 {% endblock %}
