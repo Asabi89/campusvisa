@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from .models import (
     HomePageSettings, PresentationItem, FeatureItem,
-    ProcessStep, AdvantageItem, Testimonial
+    ProcessStep, AdvantageItem, Testimonial,
+    AboutPageSettings, ServicesPageSettings, PricingPageSettings,
+    HowItWorksPageSettings, TestimonialsPageSettings, FAQPageSettings,
+    ContactPageSettings
 )
 
 def home(request):
@@ -23,22 +26,29 @@ def home(request):
     return render(request, 'pages/home.html', context)
 
 def about(request):
-    return render(request, 'pages/about.html')
+    context = {'page_settings': AboutPageSettings.get_solo()}
+    return render(request, 'pages/about.html', context)
 
 def services(request):
-    return render(request, 'pages/services.html')
+    context = {'page_settings': ServicesPageSettings.get_solo()}
+    return render(request, 'pages/services.html', context)
 
 def pricing(request):
-    return render(request, 'pages/pricing.html')
+    context = {'page_settings': PricingPageSettings.get_solo()}
+    return render(request, 'pages/pricing.html', context)
 
 def how_it_works(request):
-    return render(request, 'pages/how_it_works.html')
+    context = {'page_settings': HowItWorksPageSettings.get_solo()}
+    return render(request, 'pages/how_it_works.html', context)
 
 def testimonials(request):
-    return render(request, 'pages/testimonials.html')
+    context = {'page_settings': TestimonialsPageSettings.get_solo()}
+    return render(request, 'pages/testimonials.html', context)
 
 def faq(request):
-    return render(request, 'pages/faq.html')
+    context = {'page_settings': FAQPageSettings.get_solo()}
+    return render(request, 'pages/faq.html', context)
 
 def contact(request):
-    return render(request, 'pages/contact.html')
+    context = {'page_settings': ContactPageSettings.get_solo()}
+    return render(request, 'pages/contact.html', context)
