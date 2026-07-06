@@ -12,21 +12,19 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             
             <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-8 animate-fade-in-up mx-auto text-marine">
-                Votre parcours pour <span class="text-visaRed">étudier en</span><br>
-                <span class="text-visaRed">France</span><br>
-                commence ici
+                {{ home_settings.hero_title|safe }}
             </h1>
             
             <p class="text-lg md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto animate-fade-in-up animation-delay-200 font-medium leading-relaxed">
-                De l'inscription Campus France à l'obtention du visa — nous vous<br class="hidden md:block"> guidons à chaque étape avec un accompagnement personnalisé.
+                {{ home_settings.hero_subtitle }}
             </p>
             
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4 animate-fade-in-up animation-delay-300">
-                <a href="{% url 'account_signup' %}" class="w-full sm:w-auto px-8 py-3 bg-visaRed text-white rounded-full font-semibold hover:bg-red-800 transition-all shadow-[0_4px_14px_0_rgba(201,31,55,0.39)] hover:shadow-[0_6px_20px_rgba(201,31,55,0.23)] hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                    Démarrer mon dossier <span>&rarr;</span>
+                <a href="{% if \'http\' in home_settings.hero_primary_button_link %}{{ home_settings.hero_primary_button_link }}{% else %}{% url home_settings.hero_primary_button_link|default:\'account_signup\' %}{% endif %}" class="w-full sm:w-auto px-8 py-3 bg-visaRed text-white rounded-full font-semibold hover:bg-red-800 transition-all shadow-[0_4px_14px_0_rgba(201,31,55,0.39)] hover:shadow-[0_6px_20px_rgba(201,31,55,0.23)] hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                    {{ home_settings.hero_primary_button_text }} <span>&rarr;</span>
                 </a>
-                <a href="#processus" class="w-full sm:w-auto px-8 py-3 bg-white text-marine border-2 border-marine rounded-full font-semibold hover:bg-gray-50 transition-all flex items-center justify-center">
-                    Comment ça marche
+                <a href="{{ home_settings.hero_secondary_button_link }}" class="w-full sm:w-auto px-8 py-3 bg-white text-marine border-2 border-marine rounded-full font-semibold hover:bg-gray-50 transition-all flex items-center justify-center">
+                    {{ home_settings.hero_secondary_button_text }}
                 </a>
             </div>
             
@@ -38,29 +36,40 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-16 items-center">
                 <div>
-                    <h2 class="font-display text-3xl md:text-4xl font-bold text-marine mb-6">Finis les dossiers papiers et l'incertitude.</h2>
+                    <h2 class="font-display text-3xl md:text-4xl font-bold text-marine mb-6">{{ home_settings.presentation_title }}</h2>
                     <p class="text-lg text-gray-500 mb-6">
-                        Visanexstep à été conçu pour révolutionner la manière dont les étudiants préparent leur départ pour la France. Nous combinons une technologie de pointe avec l'expertise humaine de nos consultants.
+                        {{ home_settings.presentation_description }}
                     </p>
                     <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center mt-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            </div>
-                            <span class="ml-3 text-gray-600">Un espace centralisé pour tout votre projet</span>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center mt-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            </div>
-                            <span class="ml-3 text-gray-600">Accès direct à des experts Campus France</span>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center mt-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            </div>
-                            <span class="ml-3 text-gray-600">Sécurité et confidentialité totale de vos données</span>
-                        </li>
+                        {% if presentation_items %}
+                            {% for item in presentation_items %}
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center mt-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <span class="ml-3 text-gray-600">{{ item.text }}</span>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center mt-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <span class="ml-3 text-gray-600">Un espace centralisé pour tout votre projet</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center mt-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <span class="ml-3 text-gray-600">Accès direct à des experts Campus France</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center mt-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <span class="ml-3 text-gray-600">Sécurité et confidentialité totale de vos données</span>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
                 <div class="relative">
@@ -131,60 +140,53 @@
     <section id="fonctionnalités" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-visaRed font-semibold tracking-wide uppercase text-sm mb-3">Fonctionnalités clés</h2>
-                <h3 class="font-display text-3xl md:text-4xl font-bold text-marine mb-6">Tout ce dont vous avez besoin, au même endroit.</h3>
-                <p class="text-gray-500 text-lg">Une suite d'outils pensée spécifiquement pour la réussite de votre mobilité étudiante.</p>
+                <h2 class="text-visaRed font-semibold tracking-wide uppercase text-sm mb-3">{{ home_settings.features_subtitle }}</h2>
+                <h3 class="font-display text-3xl md:text-4xl font-bold text-marine mb-6">{{ home_settings.features_title }}</h3>
+                <p class="text-gray-500 text-lg">{{ home_settings.features_description }}</p>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
-                    <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
-                        <img src="{% static 'images/icon_folder.png' %}" alt="Coffre-fort" class="w-full h-full object-contain mix-blend-multiply">
+                {% if features %}
+                    {% for feature in features %}
+                    <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
+                        <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
+                            {% if feature.image %}
+                            <img src="{{ feature.image.url }}" alt="{{ feature.title }}" class="w-full h-full object-contain mix-blend-multiply">
+                            {% else %}
+                            <img src="{% static 'images/icon_folder.png' %}" alt="{{ feature.title }}" class="w-full h-full object-contain mix-blend-multiply">
+                            {% endif %}
+                        </div>
+                        <h4 class="text-xl font-bold text-marine mb-3">{{ feature.title }}</h4>
+                        <p class="text-gray-500">{{ feature.description }}</p>
                     </div>
-                    <h4 class="text-xl font-bold text-marine mb-3">Coffre-fort Numérique</h4>
-                    <p class="text-gray-500">Stockez, organisez et soumettez tous vos documents académiques en un clic. Vos experts les valident directement.</p>
-                </div>
-                <!-- Feature 2 -->
-                <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
-                    <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
-                        <img src="{% static 'images/icon_megaphone.png' %}" alt="Chat" class="w-full h-full object-contain mix-blend-multiply">
+                    {% endfor %}
+                {% else %}
+                    <!-- Hardcoded defaults if db is empty -->
+                    <!-- Feature 1 -->
+                    <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
+                        <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
+                            <img src="{% static 'images/icon_folder.png' %}" alt="Coffre-fort" class="w-full h-full object-contain mix-blend-multiply">
+                        </div>
+                        <h4 class="text-xl font-bold text-marine mb-3">Coffre-fort Numérique</h4>
+                        <p class="text-gray-500">Stockez, organisez et soumettez tous vos documents académiques en un clic. Vos experts les valident directement.</p>
                     </div>
-                    <h4 class="text-xl font-bold text-marine mb-3">Chat en Temps Réel</h4>
-                    <p class="text-gray-500">Discutez en direct avec vos consultants. Fini les attentes interminables par email. Une question, une réponse instantanée.</p>
-                </div>
-                <!-- Feature 3 -->
-                <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
-                    <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
-                        <img src="{% static 'images/icon_users.png' %}" alt="Visioconférence" class="w-full h-full object-contain mix-blend-multiply">
+                    <!-- Feature 2 -->
+                    <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
+                        <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
+                            <img src="{% static 'images/icon_megaphone.png' %}" alt="Chat" class="w-full h-full object-contain mix-blend-multiply">
+                        </div>
+                        <h4 class="text-xl font-bold text-marine mb-3">Chat en Temps Réel</h4>
+                        <p class="text-gray-500">Discutez en direct avec vos consultants. Fini les attentes interminables par email. Une question, une réponse instantanée.</p>
                     </div>
-                    <h4 class="text-xl font-bold text-marine mb-3">Visioconférence Intégrée</h4>
-                    <p class="text-gray-500">Réservez vos séances de coaching et passez vos entretiens blancs directement depuis la plateforme, sans logiciel tiers.</p>
-                </div>
-                <!-- Feature 4 -->
-                <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
-                    <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
-                        <img src="{% static 'images/icon_heart.png' %}" alt="Alertes" class="w-full h-full object-contain mix-blend-multiply">
+                    <!-- Feature 3 -->
+                    <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
+                        <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
+                            <img src="{% static 'images/icon_users.png' %}" alt="Visioconférence" class="w-full h-full object-contain mix-blend-multiply">
+                        </div>
+                        <h4 class="text-xl font-bold text-marine mb-3">Visioconférence Intégrée</h4>
+                        <p class="text-gray-500">Réservez vos séances de coaching et passez vos entretiens blancs directement depuis la plateforme, sans logiciel tiers.</p>
                     </div>
-                    <h4 class="text-xl font-bold text-marine mb-3">Alertes Intelligentes</h4>
-                    <p class="text-gray-500">Ne ratez aucune deadline. Soyez notifié dès qu'un document est validé, qu'un RDV approche ou qu'une action est requise.</p>
-                </div>
-                <!-- Feature 5 -->
-                <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
-                    <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
-                        <img src="{% static 'images/icon_chart.png' %}" alt="Suivi" class="w-full h-full object-contain mix-blend-multiply">
-                    </div>
-                    <h4 class="text-xl font-bold text-marine mb-3">Suivi de Progression</h4>
-                    <p class="text-gray-500">Visualisez votre avancée globale via un dashboard interactif clair. Sachez exactement où vous en êtes à tout moment.</p>
-                </div>
-                <!-- Feature 6 -->
-                <div class="p-8 rounded-2xl bg-light border border-gray-100 hover:border-gray-200 hover:shadow-soft transition-all group">
-                    <div class="w-20 h-20 mb-6 group-hover:-translate-y-2 group-hover:scale-105 transition-all drop-shadow-md">
-                        <img src="{% static 'images/icon_target.png' %}" alt="Roadmap" class="w-full h-full object-contain mix-blend-multiply">
-                    </div>
-                    <h4 class="text-xl font-bold text-marine mb-3">Roadmap Sur-Mesure</h4>
-                    <p class="text-gray-500">Dès votre inscription, un parcours personnalisé est généré selon votre profil et vos objectifs d'études.</p>
-                </div>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -194,14 +196,24 @@
         <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LCAyNTUsIDI1NSwgMC4wNSkiLz48L3N2Zz4=')] opacity-50"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-3xl mx-auto mb-20">
-                <h3 class="font-display text-3xl md:text-4xl font-bold mb-6">4 étapes pour décrocher votre visa</h3>
-                <p class="text-gray-400 text-lg">Un processus clair, digitalisé et structuré pour garantir votre succès.</p>
+                <h3 class="font-display text-3xl md:text-4xl font-bold mb-6">{{ home_settings.process_title }}</h3>
+                <p class="text-gray-400 text-lg">{{ home_settings.process_description }}</p>
             </div>
 
             <div class="grid md:grid-cols-4 gap-8 relative">
                 <!-- Connecteur visuel -->
                 <div class="hidden md:block absolute top-8 left-[10%] right-[10%] h-0.5 bg-gray-700"></div>
 
+                {% if process_steps %}
+                    {% for step in process_steps %}
+                    <div class="relative text-center">
+                        <div class="w-16 h-16 {% if forloop.first %}bg-visaRed border-2 border-visaRed text-white shadow-[0_0_15px_rgba(0,85,164,0.5)]{% else %}bg-marine border-2 border-gray-700 text-gray-500 hover:border-visaRed hover:text-white{% endif %} rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-6 relative z-10 transition-colors">{{ step.number }}</div>
+                        <h4 class="text-xl font-bold mb-3">{{ step.title }}</h4>
+                        <p class="text-gray-400 text-sm">{{ step.description }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <!-- Defaults -->
                 <!-- Étape 1 -->
                 <div class="relative text-center">
                     <div class="w-16 h-16 bg-visaRed border-2 border-visaRed rounded-full flex items-center justify-center text-xl font-bold text-white mx-auto mb-6 relative z-10 shadow-[0_0_15px_rgba(0,85,164,0.5)]">1</div>
@@ -226,6 +238,7 @@
                     <h4 class="text-xl font-bold mb-3">Dépôt & Visa</h4>
                     <p class="text-gray-400 text-sm">Dossier finalisé à 100%. Vous déposez sereinement, avec les meilleures chances.</p>
                 </div>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -236,6 +249,31 @@
             <div class="grid lg:grid-cols-2 gap-16 items-center">
                 <div class="order-2 lg:order-1 relative">
                     <div class="grid grid-cols-2 gap-4">
+                        {% if advantages %}
+                            {% for adv in advantages %}
+                                {% if adv.is_highlighted %}
+                                <div class="bg-white p-6 rounded-2xl border-2 border-visaRed/20 shadow-lg mt-8 relative overflow-hidden">
+                                    <div class="absolute top-0 right-0 p-3 opacity-10">
+                                        <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>
+                                    </div>
+                                    <div class="text-visaRed mb-4 relative z-10">
+                                        {% if adv.icon_svg %}{{ adv.icon_svg|safe }}{% else %}<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>{% endif %}
+                                    </div>
+                                    <h4 class="font-bold text-marine mb-2 relative z-10">{{ adv.title }}</h4>
+                                    <p class="text-sm text-gray-500 relative z-10">{{ adv.description }}</p>
+                                </div>
+                                {% else %}
+                                <div class="bg-light p-6 rounded-2xl border border-gray-100 {% if forloop.counter|divisibleby:2 %}mt-8{% endif %}">
+                                    <div class="text-visaRed mb-4">
+                                        {% if adv.icon_svg %}{{ adv.icon_svg|safe }}{% else %}<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{% endif %}
+                                    </div>
+                                    <h4 class="font-bold text-marine mb-2">{{ adv.title }}</h4>
+                                    <p class="text-sm text-gray-500">{{ adv.description }}</p>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                        <!-- Defaults -->
                         <div class="bg-light p-6 rounded-2xl border border-gray-100">
                             <div class="text-visaRed mb-4">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -267,16 +305,17 @@
                             <h4 class="font-bold text-marine mb-2 relative z-10">Excellence</h4>
                             <p class="text-sm text-gray-500 relative z-10">Notre méthodologie éprouvée augmente considérablement vos chances.</p>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="order-1 lg:order-2">
-                    <h2 class="text-visaRed font-semibold tracking-wide uppercase text-sm mb-3">L'avantage Visanexstep</h2>
-                    <h3 class="font-display text-3xl md:text-4xl font-bold text-marine mb-6">Mettez toutes les chances de votre côté.</h3>
+                    <h2 class="text-visaRed font-semibold tracking-wide uppercase text-sm mb-3">{{ home_settings.advantages_subtitle }}</h2>
+                    <h3 class="font-display text-3xl md:text-4xl font-bold text-marine mb-6">{{ home_settings.advantages_title }}</h3>
                     <p class="text-lg text-gray-500 mb-6">
-                        Une demande de visa étudiant est un parcours complexe où la moindre erreur peut être fatale. Nous éliminons ce risque.
+                        {{ home_settings.advantages_description_1 }}
                     </p>
                     <p class="text-lg text-gray-500">
-                        Notre approche hybride (SaaS + Humain) vous permet de rester autonome tout en bénéficiant de l'œil expert de professionnels à chaque étape clé. Vous n'êtes plus jamais seul face à vos démarches.
+                        {{ home_settings.advantages_description_2 }}
                     </p>
                 </div>
             </div>
@@ -286,9 +325,35 @@
     <!-- 7. TÉMOIGNAGES -->
     <section class="py-24 bg-white border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="font-display text-3xl md:text-4xl font-bold text-marine text-center mb-16">Ils ont réussi avec Visanexstep</h2>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-marine text-center mb-16">{{ home_settings.testimonials_title }}</h2>
             
             <div class="grid md:grid-cols-3 gap-8">
+                {% if testimonials %}
+                    {% for testimonial in testimonials %}
+                    <div class="p-8 rounded-2xl bg-light border border-gray-100">
+                        <div class="flex gap-1 text-visaRed mb-4">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        </div>
+                        <p class="text-gray-600 mb-6 italic">"{{ testimonial.quote }}"</p>
+                        <div class="flex items-center gap-4">
+                            {% if testimonial.image %}
+                            <div class="w-10 h-10 rounded-full overflow-hidden"><img src="{{ testimonial.image.url }}" class="w-full h-full object-cover"></div>
+                            {% else %}
+                            <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+                            {% endif %}
+                            <div>
+                                <h5 class="font-bold text-marine">{{ testimonial.name }}</h5>
+                                <p class="text-sm text-gray-500">{{ testimonial.subtitle }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <!-- Defaults -->
                 <!-- Témoignage 1 -->
                 <div class="p-8 rounded-2xl bg-light border border-gray-100">
                     <div class="flex gap-1 text-visaRed mb-4">
@@ -325,24 +390,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Témoignage 3 -->
-                <div class="p-8 rounded-2xl bg-light border border-gray-100">
-                    <div class="flex gap-1 text-visaRed mb-4">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    </div>
-                    <p class="text-gray-600 mb-6 italic">"Les entretiens blancs en visio m'ont donné une confiance absolue le jour J. Visanexstep, c'est l'avenir pour les étudiants internationaux."</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
-                        <div>
-                            <h5 class="font-bold text-marine">Fatou M.</h5>
-                            <p class="text-sm text-gray-500">Bachelor Management, Lille</p>
-                        </div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -351,13 +399,13 @@
     <section class="py-32 bg-white relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-red-50/30"></div>
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h2 class="font-display text-4xl md:text-5xl font-black text-marine mb-6">Prêt à transformer votre projet d'études en réalité ?</h2>
-            <p class="text-xl text-gray-500 mb-10">Rejoignez des centaines d'étudiants qui ont choisi la sérénité avec Visanexstep.</p>
-            <a href="{% url 'account_signup' %}" class="inline-flex items-center gap-2 px-10 py-5 bg-marine text-white text-lg font-bold rounded-xl hover:bg-visaRed transition-all shadow-glow hover:-translate-y-1">
-                Créer mon compte gratuitement
+            <h2 class="font-display text-4xl md:text-5xl font-black text-marine mb-6">{{ home_settings.cta_title }}</h2>
+            <p class="text-xl text-gray-500 mb-10">{{ home_settings.cta_subtitle }}</p>
+            <a href="{% if \'http\' in home_settings.cta_button_link %}{{ home_settings.cta_button_link }}{% else %}{% url home_settings.cta_button_link|default:\'account_signup\' %}{% endif %}" class="inline-flex items-center gap-2 px-10 py-5 bg-marine text-white text-lg font-bold rounded-xl hover:bg-visaRed transition-all shadow-glow hover:-translate-y-1">
+                {{ home_settings.cta_button_text }}
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
-            <p class="mt-6 text-sm text-gray-400">Aucune carte de crédit requise pour s'inscrire.</p>
+            <p class="mt-6 text-sm text-gray-400">{{ home_settings.cta_subtext }}</p>
         </div>
     </section>
 

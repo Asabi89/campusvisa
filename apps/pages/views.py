@@ -1,7 +1,26 @@
 from django.shortcuts import render
+from .models import (
+    HomePageSettings, PresentationItem, FeatureItem,
+    ProcessStep, AdvantageItem, Testimonial
+)
 
 def home(request):
-    return render(request, 'pages/home.html')
+    home_settings = HomePageSettings.get_solo()
+    presentation_items = PresentationItem.objects.filter(is_active=True)
+    features = FeatureItem.objects.filter(is_active=True)
+    process_steps = ProcessStep.objects.filter(is_active=True)
+    advantages = AdvantageItem.objects.filter(is_active=True)
+    testimonials = Testimonial.objects.filter(is_active=True)
+    
+    context = {
+        'home_settings': home_settings,
+        'presentation_items': presentation_items,
+        'features': features,
+        'process_steps': process_steps,
+        'advantages': advantages,
+        'testimonials': testimonials,
+    }
+    return render(request, 'pages/home.html', context)
 
 def about(request):
     return render(request, 'pages/about.html')
