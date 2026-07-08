@@ -190,12 +190,18 @@ class ServicesPageSettings(models.Model):
         return obj
 
 class PricingPageSettings(models.Model):
-    title = models.CharField(max_length=255, default="Nos Tarifs")
-    subtitle = models.TextField(blank=True, default="Choisissez le plan qui vous correspond.")
+    title = models.CharField(max_length=255, default="Un tarif transparent.<br/>Zéro surprise.")
+    subtitle = models.TextField(blank=True, default="Choisissez l'offre qui correspond à vos besoins et bénéficiez de l'accompagnement idéal pour vos études en France.")
+    
+    # CTA Section
+    cta_title = models.CharField(max_length=255, default="Encore des questions sur nos tarifs ?")
+    cta_subtitle = models.TextField(blank=True, default="Notre équipe est là pour vous guider vers la meilleure formule pour votre profil.")
+    cta_button_text = models.CharField(max_length=100, default="Contacter un conseiller")
+    cta_button_link = models.CharField(max_length=255, default="pages:contact")
     
     class Meta:
-        verbose_name ="Visanexstep - Page Tarifs"
-        verbose_name_plural ="Visanexstep - Page Tarifs"
+        verbose_name ="Visanexstep - Page Tarifs - Paramètres"
+        verbose_name_plural ="Visanexstep - Page Tarifs - Paramètres"
 
     def __str__(self): return 'Paramètres de la page Tarifs'
 
@@ -203,6 +209,59 @@ class PricingPageSettings(models.Model):
     def get_solo(cls):
         obj, created = cls.objects.get_or_create(id=1)
         return obj
+
+
+class PricingPlan(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Nom de l'offre")
+    description = models.TextField(verbose_name="Description")
+    price = models.CharField(max_length=50, verbose_name="Prix (ex: 49€ ou Sur devis)")
+    button_text = models.CharField(max_length=100, verbose_name="Texte du bouton")
+    button_link = models.CharField(max_length=255, default="#", verbose_name="Lien du bouton")
+    is_popular = models.BooleanField(default=False, verbose_name="Plus populaire")
+    features_list = models.TextField(help_text="Une fonctionnalité par ligne. Précéder d'un '-' (ex: - Accès à la plateforme). Pour barrer/désactiver, précéder d'un 'x' (ex: x Chat en temps réel).", verbose_name="Liste des fonctionnalités")
+    order = models.IntegerField(default=0, verbose_name="Ordre d'affichage")
+    is_active = models.BooleanField(default=True, verbose_name="Actif")
+
+    class Meta:
+        verbose_name = "Visanexstep - Tarifs Offre"
+        verbose_name_plural = "Visanexstep - Tarifs Offres"
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
+
+    def get_features(self):
+        features = []
+        for line in self.features_list.strip().split('\n'):
+            line = line.strip()
+            if not line:
+                continue
+            is_active = True
+            if line.startswith('-'):
+                text = line[1:].strip()
+            elif line.startswith('x') or line.startswith('X'):
+                text = line[1:].strip()
+                is_active = False
+            else:
+                text = line
+            features.append({'text': text, 'is_active': is_active})
+        return features
+
+
+class PricingFeature(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Nom de la fonctionnalité")
+    basic_value = models.CharField(max_length=100, blank=True, verbose_name="Valeur pour Essentiel (ex: 'Oui', 'Non', '1 seule fois')")
+    premium_value = models.CharField(max_length=100, blank=True, verbose_name="Valeur pour Premium")
+    excellence_value = models.CharField(max_length=100, blank=True, verbose_name="Valeur pour Excellence")
+    order = models.IntegerField(default=0, verbose_name="Ordre d'affichage")
+
+    class Meta:
+        verbose_name = "Visanexstep - Tarifs Comparatif"
+        verbose_name_plural = "Visanexstep - Tarifs Comparatifs"
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
 
 class HowItWorksPageSettings(models.Model):
     title = models.CharField(max_length=255, default="Comment ça marche")

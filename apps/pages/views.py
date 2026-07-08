@@ -4,7 +4,7 @@ from .models import (
     ProcessStep, AdvantageItem, Testimonial,
     AboutPageSettings, ServicesPageSettings, PricingPageSettings,
     HowItWorksPageSettings, TestimonialsPageSettings, FAQPageSettings,
-    ContactPageSettings
+    ContactPageSettings, PricingPlan, PricingFeature
 )
 
 def home(request):
@@ -34,7 +34,11 @@ def services(request):
     return render(request, 'pages/services.html', context)
 
 def pricing(request):
-    context = {'page_settings': PricingPageSettings.get_solo()}
+    context = {
+        'page_settings': PricingPageSettings.get_solo(),
+        'plans': PricingPlan.objects.filter(is_active=True).order_by('order'),
+        'features': PricingFeature.objects.all().order_by('order'),
+    }
     return render(request, 'pages/pricing.html', context)
 
 def how_it_works(request):
