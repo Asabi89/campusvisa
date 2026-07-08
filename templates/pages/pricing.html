@@ -4,217 +4,32 @@
 {% block content %}
 
 <!-- En-tête -->
-    <section class="pt-28 pb-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-black text-marine mb-6 animate-fade-in-up">{{ page_settings.title|safe|default:"Un tarif transparent.<br/>Zéro surprise." }}</h1>
-            <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-12 animate-fade-in-up animation-delay-100">{{ page_settings.subtitle|default:"Choisissez l'offre qui correspond à vos besoins et bénéficiez de l'accompagnement idéal pour vos études en France." }}</p>
+    <section class="pt-28 pb-12 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="font-display text-4xl md:text-5xl font-black text-marine mb-6 animate-fade-in-up">
+                {{ page_settings.title|safe|default:"Un tarif transparent.<br/>Zéro surprise." }}
+            </h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto animate-fade-in-up animation-delay-100">
+                {{ page_settings.subtitle|default:"Découvrez nos conditions d'accompagnement pour vos études en France." }}
+            </p>
         </div>
     </section>
 
-    <!-- Tableau des offres -->
-    <section class="py-12 bg-white relative z-10 -mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-{{ plans.count|default:3 }} gap-8 max-w-5xl mx-auto">
-                {% for plan in plans %}
-                <!-- Plan Card -->
-                <div class="{% if plan.is_popular %}bg-marine text-white border-2 border-visaRed md:-translate-y-4 relative shadow-xl{% else %}bg-white text-marine border border-gray-200 shadow-sm hover:shadow-soft{% endif %} rounded-2xl p-8 transition-all animate-fade-in-up">
-                    {% if plan.is_popular %}
-                        <div class="absolute top-0 right-8 -translate-y-1/2 bg-visaRed text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Plus populaire</div>
-                    {% endif %}
-                    <h3 class="text-2xl font-bold {% if plan.is_popular %}text-white{% else %}text-marine{% endif %} mb-2">{{ plan.name }}</h3>
-                    <p class="{% if plan.is_popular %}text-gray-400{% else %}text-gray-500{% endif %} text-sm mb-6">{{ plan.description }}</p>
-                    <div class="mb-8">
-                        <span class="text-4xl font-black {% if plan.is_popular %}text-white{% else %}text-marine{% endif %}">{{ plan.price }}</span>
-                    </div>
-                    <a href="{{ plan.button_link }}" class="block w-full py-3 px-4 {% if plan.is_popular %}bg-visaRed text-white hover:bg-red-600 shadow-glow{% else %}bg-light text-marine border border-gray-200 hover:bg-gray-50{% endif %} font-semibold text-center rounded-xl transition-colors mb-8">
-                        {{ plan.button_text }}
+    <!-- Contenu Explicatif -->
+    <section class="pb-24 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-light rounded-2xl border border-gray-100 p-8 md:p-12 shadow-sm hover:shadow-soft transition-all animate-fade-in-up animation-delay-200">
+                <div class="prose prose-lg text-gray-600 leading-relaxed space-y-6">
+                    {{ page_settings.description|safe|linebreaks }}
+                </div>
+                
+                <div class="mt-12 text-center">
+                    <a href="{% if 'http' in page_settings.button_link or '/' in page_settings.button_link %}{{ page_settings.button_link }}{% else %}{% url page_settings.button_link|default:'pages:contact' %}{% endif %}" class="inline-flex items-center gap-3 px-8 py-4 bg-visaRed text-white font-bold rounded-xl hover:bg-blue-600 transition-colors shadow-glow">
+                        {{ page_settings.button_text|default:"Contactez-nous" }}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
-                    <ul class="space-y-4">
-                        {% for feature in plan.get_features %}
-                        <li class="flex items-start gap-3 {% if not feature.is_active %}opacity-40{% endif %}">
-                            {% if feature.is_active %}
-                                <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                <span class="text-sm {% if plan.is_popular %}text-gray-200{% else %}text-gray-600{% endif %}">{{ feature.text }}</span>
-                            {% else %}
-                                <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                <span class="text-sm {% if plan.is_popular %}text-gray-400{% else %}text-gray-500{% endif %}">{{ feature.text }}</span>
-                            {% endif %}
-                        </li>
-                        {% endfor %}
-                    </ul>
                 </div>
-                {% empty %}
-                <!-- Plan Basic -->
-                <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-soft transition-all animate-fade-in-up">
-                    <h3 class="text-2xl font-bold text-marine mb-2">Essentiel</h3>
-                    <p class="text-gray-500 text-sm mb-6">Pour les étudiants autonomes qui souhaitent vérifier leur dossier.</p>
-                    <div class="mb-8">
-                        <span class="text-4xl font-black text-marine">49€</span>
-                    </div>
-                    <a href="#" class="block w-full py-3 px-4 bg-light text-marine font-semibold text-center rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors mb-8">Choisir Essentiel</a>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-600">Accès à la plateforme (Coffre-fort)</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-600">Roadmap personnalisée</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-600">Relecture de 2 documents</span>
-                        </li>
-                        <li class="flex items-start gap-3 opacity-40">
-                            <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            <span class="text-sm text-gray-600">Chat en temps réel</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Plan Pro (Populaire) -->
-                <div class="bg-marine rounded-2xl border-2 border-visaRed p-8 shadow-xl transform md:-translate-y-4 relative animate-fade-in-up">
-                    <div class="absolute top-0 right-8 -translate-y-1/2 bg-visaRed text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Plus populaire</div>
-                    <h3 class="text-2xl font-bold text-white mb-2">Premium</h3>
-                    <p class="text-gray-400 text-sm mb-6">L'accompagnement complet avec coaching de A à Z.</p>
-                    <div class="mb-8">
-                        <span class="text-4xl font-black text-white">199€</span>
-                    </div>
-                    <a href="#" class="block w-full py-3 px-4 bg-visaRed text-white font-semibold text-center rounded-xl hover:bg-blue-600 transition-colors shadow-glow mb-8">Commencer Premium</a>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-200">Tout de l'offre Essentiel</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-200">Validation illimitée des documents</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-200">Chat en direct 7j/7</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-200">2 entretiens blancs en visio</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Plan Custom -->
-                <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-soft transition-all animate-fade-in-up">
-                    <h3 class="text-2xl font-bold text-marine mb-2">Excellence</h3>
-                    <p class="text-gray-500 text-sm mb-6">Pour les cas complexes (refus antérieur, réorientation).</p>
-                    <div class="mb-8">
-                        <span class="text-4xl font-black text-marine">Sur devis</span>
-                    </div>
-                    <a href="{% url 'pages:contact' %}" class="block w-full py-3 px-4 bg-light text-marine font-semibold text-center rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors mb-8">Nous contacter</a>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-600">Tout de l'offre Premium</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-600">Accompagnement prioritaire VIP</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-visaRed flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-600">Recours gracieux / contentieux</span>
-                        </li>
-                    </ul>
-                </div>
-                {% endfor %}
             </div>
-        </div>
-    </section>
-
-    <!-- Comparaison des fonctionnalités -->
-    <section class="py-24 bg-light">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 class="font-display text-3xl font-bold text-marine mb-12 text-center">Comparez toutes les fonctionnalités</h3>
-            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50 border-b border-gray-200">
-                            <th class="py-4 px-6 font-semibold text-marine w-2/5">Fonctionnalité</th>
-                            <th class="py-4 px-6 font-semibold text-marine text-center w-1/5">Essentiel</th>
-                            <th class="py-4 px-6 font-semibold text-visaRed text-center w-1/5">Premium</th>
-                            <th class="py-4 px-6 font-semibold text-marine text-center w-1/5">Excellence</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        {% for feature in features %}
-                        <tr>
-                            <td class="py-4 px-6 text-sm text-gray-600">{{ feature.name }}</td>
-                            <td class="py-4 px-6 text-center">
-                                {% if feature.basic_value == 'checked' or feature.basic_value == 'yes' or feature.basic_value == 'Oui' %}
-                                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                {% elif feature.basic_value == 'unchecked' or feature.basic_value == 'no' or feature.basic_value == 'Non' or feature.basic_value == '' %}
-                                    <svg class="w-5 h-5 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
-                                {% else %}
-                                    <span class="text-sm text-gray-600 font-medium">{{ feature.basic_value }}</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-4 px-6 text-center">
-                                {% if feature.premium_value == 'checked' or feature.premium_value == 'yes' or feature.premium_value == 'Oui' %}
-                                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                {% elif feature.premium_value == 'unchecked' or feature.premium_value == 'no' or feature.premium_value == 'Non' or feature.premium_value == '' %}
-                                    <svg class="w-5 h-5 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
-                                {% else %}
-                                    <span class="text-sm text-gray-600 font-medium">{{ feature.premium_value }}</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-4 px-6 text-center">
-                                {% if feature.excellence_value == 'checked' or feature.excellence_value == 'yes' or feature.excellence_value == 'Oui' %}
-                                    <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                {% elif feature.excellence_value == 'unchecked' or feature.excellence_value == 'no' or feature.excellence_value == 'Non' or feature.excellence_value == '' %}
-                                    <svg class="w-5 h-5 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
-                                {% else %}
-                                    <span class="text-sm text-gray-600 font-medium">{{ feature.excellence_value }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td class="py-4 px-6 text-sm text-gray-600">Accès au Dashboard</td>
-                            <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
-                            <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
-                            <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-6 text-sm text-gray-600">Relecture Lettre de Motivation</td>
-                            <td class="py-4 px-6 text-center text-sm text-gray-500">1 seule fois</td>
-                            <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
-                            <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-6 text-sm text-gray-600">Chat avec un conseiller</td>
-                            <td class="py-4 px-6 text-center text-gray-300"><svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg></td>
-                            <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
-                            <td class="py-4 px-6 text-center"><svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-6 text-sm text-gray-600">Simulation d'entretien vidéo</td>
-                            <td class="py-4 px-6 text-center text-gray-300"><svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg></td>
-                            <td class="py-4 px-6 text-center text-sm text-gray-600 font-medium">2 séances</td>
-                            <td class="py-4 px-6 text-center text-sm text-gray-600 font-medium">Illimité</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- Appel à l'action -->
-    <section class="py-24 bg-white">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="font-display text-3xl font-bold text-marine mb-6">{{ page_settings.cta_title|default:"Encore des questions sur nos tarifs ?" }}</h2>
-            <p class="text-gray-500 mb-8">{{ page_settings.cta_subtitle|default:"Notre équipe est là pour vous guider vers la meilleure formule pour votre profil." }}</p>
-            <a href="{% if 'http' in page_settings.cta_button_link or '/' in page_settings.cta_button_link %}{{ page_settings.cta_button_link }}{% else %}{% url page_settings.cta_button_link|default:'pages:contact' %}{% endif %}" class="inline-flex items-center gap-2 px-8 py-4 bg-white text-marine border border-gray-200 rounded-xl font-medium hover:border-gray-300 hover:bg-gray-50 transition-all">
-                {{ page_settings.cta_button_text|default:"Contacter un conseiller" }}
-            </a>
         </div>
     </section>
 

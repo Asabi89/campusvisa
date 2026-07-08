@@ -94,17 +94,5 @@ class FAQPageSettingsAdmin(SingletonModelAdmin): pass
 class ContactPageSettingsAdmin(SingletonModelAdmin): pass
 
 
-from .models import PricingPlan, PricingFeature
-
-@admin.register(PricingPlan)
-class PricingPlanAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'is_popular', 'order', 'is_active')
-    list_editable = ('price', 'is_popular', 'order', 'is_active')
-    search_fields = ('name', 'description')
-
-@admin.register(PricingFeature)
-class PricingFeatureAdmin(admin.ModelAdmin):
-    list_display = ('name', 'basic_value', 'premium_value', 'excellence_value', 'order')
-    list_editable = ('basic_value', 'premium_value', 'excellence_value', 'order')
-    search_fields = ('name',)
+# PricingPlan and PricingFeature are no longer used on the simplified pricing page.
 

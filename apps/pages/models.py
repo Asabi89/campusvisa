@@ -190,14 +190,11 @@ class ServicesPageSettings(models.Model):
         return obj
 
 class PricingPageSettings(models.Model):
-    title = models.CharField(max_length=255, default="Un tarif transparent.<br/>Zéro surprise.")
-    subtitle = models.TextField(blank=True, default="Choisissez l'offre qui correspond à vos besoins et bénéficiez de l'accompagnement idéal pour vos études en France.")
-    
-    # CTA Section
-    cta_title = models.CharField(max_length=255, default="Encore des questions sur nos tarifs ?")
-    cta_subtitle = models.TextField(blank=True, default="Notre équipe est là pour vous guider vers la meilleure formule pour votre profil.")
-    cta_button_text = models.CharField(max_length=100, default="Contacter un conseiller")
-    cta_button_link = models.CharField(max_length=255, default="pages:contact")
+    title = models.CharField(max_length=255, default="Un tarif transparent. Zéro surprise.")
+    subtitle = models.TextField(blank=True, default="Découvrez nos conditions d'accompagnement pour vos études en France.")
+    description = models.TextField(blank=True, default="Nous proposons un accompagnement personnalisé et adapté à chaque profil d'étudiant. Nos tarifs sont établis sur mesure en fonction de la complexité de votre dossier, de vos besoins en coaching, et des services spécifiques demandés. Contactez-nous pour obtenir un devis gratuit et personnalisé.")
+    button_text = models.CharField(max_length=100, default="Contactez-nous")
+    button_link = models.CharField(max_length=255, default="pages:contact")
     
     class Meta:
         verbose_name ="Visanexstep - Page Tarifs - Paramètres"
