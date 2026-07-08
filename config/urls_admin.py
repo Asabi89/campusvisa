@@ -7,6 +7,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
+# Customize Django Administration header and titles
+admin.site.site_header = "Nextstep Consulting"
+admin.site.site_title = "Nextstep Consulting Admin"
+admin.site.index_title = "Administration Nextstep Consulting"
+
 urlpatterns = [
     path('', admin.site.urls),
 ]

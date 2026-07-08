@@ -152,6 +152,7 @@ class CampusFrancePageSettings(models.Model):
 class ContactPageSettings(models.Model):
     title = models.CharField(max_length=255, default="Contactez-nous")
     subtitle = models.TextField(blank=True, default="Nous sommes à votre écoute.")
+    description = models.TextField(blank=True, default="Vous avez un projet en tête ou souhaitez en savoir plus sur nos services ? N'hésitez pas à nous contacter, notre équipe vous répondra dans les plus brefs délais.")
     
     class Meta:
         verbose_name ="Nextstep - Page Contact"
