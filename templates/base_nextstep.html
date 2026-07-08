@@ -28,13 +28,13 @@
                 <div class="flex items-center">
                     <a href="{% url 'nextstep:home' %}" class="flex items-center gap-2">
                         {% if ns_settings and ns_settings.logo %}
-                            <img src="{{ ns_settings.logo.url }}" alt="Logo" class="h-10">
+                            <img src="{{ ns_settings.logo.url }}" alt="Logo" class="h-10 w-auto object-contain">
                         {% else %}
                             <svg class="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
-                            <span class="font-bold text-xl uppercase tracking-wider">Next Step<br/><span class="text-xs text-blue font-medium">Consulting</span></span>
                         {% endif %}
+                        <span class="font-bold text-xl uppercase tracking-wider">Next Step<br/><span class="text-xs text-blue font-medium">Consulting</span></span>
                     </a>
                 </div>
                 
