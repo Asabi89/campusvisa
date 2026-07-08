@@ -66,7 +66,9 @@
                     {% for service in services %}
                     <div class="bg-white p-8 border border-gray-100 hover:shadow-xl transition-shadow group {% if forloop.last and services.count|divisibleby:2 %}md:col-span-2 lg:col-span-1{% endif %}">
                         <div class="w-16 h-16 mb-6">
-                            {% if service.icon_name %}
+                            {% if service.icon %}
+                            <img src="{{ service.icon.url }}" alt="{{ service.title }}" class="w-full h-full object-contain mix-blend-multiply">
+                            {% elif service.icon_name %}
                             <img src="{% static 'assets/'|add:service.icon_name %}" alt="{{ service.title }}" class="w-full h-full object-contain mix-blend-multiply">
                             {% else %}
                             <img src="{% static 'assets/icon_target.png' %}" alt="{{ service.title }}" class="w-full h-full object-contain mix-blend-multiply">
@@ -107,18 +109,22 @@
     <section class="py-20 bg-marine text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
             <div class="md:w-1/2">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Notre service phare : Campus France</h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">{{ home_settings.service_phare_title|default:"Notre service phare : Campus France" }}</h2>
                 <div class="w-16 h-1 bg-gold mb-6"></div>
                 <p class="text-gray-300 text-lg mb-8 leading-relaxed">
-                    Vous rêvez d'étudier en France ? Nous vous accompagnons de A à Z : choix de l'établissement, procédure Campus France, demande de visa, et préparation au départ. Mettez toutes les chances de votre côté avec notre équipe d'experts.
+                    {{ home_settings.service_phare_description|default:"Vous rêvez d'étudier en France ? Nous vous accompagnons de A à Z : choix de l'établissement, procédure Campus France, demande de visa, et préparation au départ. Mettez toutes les chances de votre côté avec notre équipe d'experts." }}
                 </p>
-                <a href="https://visa.nextstepc.com" class="inline-flex items-center gap-2 bg-gold text-marine px-6 py-3 font-semibold hover:bg-yellow-500 transition-colors">
-                    Découvrir l'accompagnement
+                <a href="{{ home_settings.service_phare_button_link|default:'https://visa.nextstepc.com' }}" class="inline-flex items-center gap-2 bg-gold text-marine px-6 py-3 font-semibold hover:bg-yellow-500 transition-colors">
+                    {{ home_settings.service_phare_button_text|default:"Découvrir l'accompagnement" }}
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 </a>
             </div>
             <div class="md:w-1/2 flex justify-center relative">
+                {% if home_settings.service_phare_image %}
+                <img src="{{ home_settings.service_phare_image.url }}" alt="{{ home_settings.service_phare_title }}" class="relative z-10 w-full max-w-lg h-auto rounded-[11px] shadow-lg">
+                {% else %}
                 <img src="{% static 'assets/campus_france_illustration.png' %}" alt="Campus France Illustration" class="relative z-10 w-full max-w-lg h-auto rounded-[11px] shadow-lg">
+                {% endif %}
             </div>
         </div>
     </section>
@@ -131,6 +137,23 @@
                 <div class="w-16 h-1 bg-gold mx-auto"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% if advantages %}
+                    {% for advantage in advantages %}
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-light">
+                            {% if advantage.icon %}
+                            <img src="{{ advantage.icon.url }}" alt="{{ advantage.title }}" class="w-12 h-12 object-contain mix-blend-multiply">
+                            {% elif advantage.icon_name %}
+                            <img src="{% static 'assets/'|add:advantage.icon_name %}" alt="{{ advantage.title }}" class="w-12 h-12 object-contain mix-blend-multiply">
+                            {% else %}
+                            <img src="{% static 'assets/icon_target.png' %}" alt="{{ advantage.title }}" class="w-12 h-12 object-contain mix-blend-multiply">
+                            {% endif %}
+                        </div>
+                        <h3 class="text-xl font-bold text-marine mb-3">{{ advantage.title }}</h3>
+                        <p class="text-gray-600 text-sm">{{ advantage.description }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
                 <!-- Expertise -->
                 <div class="text-center">
                     <div class="w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-light">
@@ -160,6 +183,7 @@
                     <h3 class="text-xl font-bold text-marine mb-3">Transparence & Suivi</h3>
                     <p class="text-gray-600 text-sm">Des reportings clairs et un suivi constant de l'évolution.</p>
                 </div>
+                {% endif %}
             </div>
         </div>
     </section>

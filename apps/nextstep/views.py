@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import (
-    NextStepFAQ, NextStepService, NextStepTestimonial,
+    NextStepFAQ, NextStepService, NextStepTestimonial, NextStepAdvantage,
     NextstepHomePageSettings, CampusFrancePageSettings,
     ContactPageSettings, FAQPageSettings, MentionsLegalesSettings
 )
@@ -10,6 +10,7 @@ def home(request):
     context = {
         'home_settings': home_settings,
         'services': NextStepService.objects.filter(is_active=True).order_by('order'),
+        'advantages': NextStepAdvantage.objects.filter(is_active=True).order_by('order'),
         'testimonials': NextStepTestimonial.objects.filter(is_active=True),
         'faqs': NextStepFAQ.objects.filter(is_active=True).order_by('order')[:5], # Only show top 5 FAQs on home
     }

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import NextStepSettings, NextStepFAQ, NextStepService, NextStepTestimonial
+from .models import NextStepSettings, NextStepFAQ, NextStepService, NextStepTestimonial, NextStepAdvantage
 
 @admin.register(NextStepSettings)
 class NextStepSettingsAdmin(admin.ModelAdmin):
@@ -27,6 +27,12 @@ class NextStepTestimonialAdmin(admin.ModelAdmin):
     list_display = ('student_name', 'program', 'rating', 'is_active')
     list_editable = ('is_active',)
     search_fields = ('student_name', 'content')
+
+@admin.register(NextStepAdvantage)
+class NextStepAdvantageAdmin(admin.ModelAdmin):
+    list_display = ('title', 'order', 'is_active')
+    list_editable = ('order', 'is_active')
+    search_fields = ('title', 'description')
 
 from .models import (
     NextstepHomePageSettings,

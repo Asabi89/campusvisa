@@ -53,13 +53,14 @@ class NextStepFAQ(models.Model):
 class NextStepService(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    icon_name = models.CharField(max_length=100, blank=True, help_text="Nom de l'icône (ex: icon_target.png) ou chemin")
+    icon = models.ImageField(upload_to="nextstep/services/", blank=True, null=True, help_text="Télécharger l'icône de l'expertise (Image ou SVG)")
+    icon_name = models.CharField(max_length=100, blank=True, help_text="Nom de l'icône statique (ex: icon_target.png, facultatif si image chargée)")
     order = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = 'Nextstep - Accueil Service'
-        verbose_name_plural = 'Nextstep - Accueil Services'
+        verbose_name = "Nextstep - Domaine d'expertise"
+        verbose_name_plural = "Nextstep - Domaines d'expertise"
         ordering = ['order']
 
     def __str__(self):
@@ -81,6 +82,24 @@ class NextStepTestimonial(models.Model):
     def __str__(self):
         return f"Témoignage de {self.student_name}"
 
+
+class NextStepAdvantage(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    icon = models.ImageField(upload_to="nextstep/advantages/", blank=True, null=True, help_text="Télécharger l'icône de l'avantage (Image ou SVG)")
+    icon_name = models.CharField(max_length=100, blank=True, help_text="Nom de l'icône statique (ex: icon_target.png, facultatif si image chargée)")
+    order = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Nextstep - Accueil Avantage"
+        verbose_name_plural = "Nextstep - Accueil Avantages"
+        ordering = ['order']
+
+    def __str__(self):
+        return self.title
+
+
 class NextstepHomePageSettings(models.Model):
     # Hero Section
     hero_title = models.CharField(max_length=255, default="Bienvenue chez NextStep Consulting")
@@ -93,13 +112,20 @@ class NextstepHomePageSettings(models.Model):
     about_title = models.CharField(max_length=255, default="À Propos de Nous")
     about_text = models.TextField(blank=True, default="Nous sommes une équipe d'experts dédiés à la réussite de votre mobilité internationale.")
     
+    # Service Phare Section
+    service_phare_title = models.CharField(max_length=255, default="Notre service phare : Campus France")
+    service_phare_description = models.TextField(default="Vous rêvez d'étudier en France ? Nous vous accompagnons de A à Z : choix de l'établissement, procédure Campus France, demande de visa, et préparation au départ. Mettez toutes les chances de votre côté avec notre équipe d'experts.")
+    service_phare_button_text = models.CharField(max_length=100, default="Découvrir l'accompagnement")
+    service_phare_button_link = models.CharField(max_length=255, default="https://visa.nextstepc.com")
+    service_phare_image = models.ImageField(upload_to="nextstep/home/", blank=True, null=True, help_text="Image d'illustration du service phare (droite)")
+
     # Why Choose Us Section
     why_us_title = models.CharField(max_length=255, default="Pourquoi nous choisir ?")
     why_us_text = models.TextField(blank=True, default="Un accompagnement personnalisé et une expertise reconnue.")
 
     class Meta:
-        verbose_name = 'Nextstep - Paramètres Accueil'
-        verbose_name_plural = 'Nextstep - Paramètres Accueil'
+        verbose_name = "Nextstep - Paramètres Accueil"
+        verbose_name_plural = "Nextstep - Paramètres Accueil"
 
     def __str__(self): return "Paramètres de la page d'accueil"
 
